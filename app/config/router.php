@@ -1,0 +1,53 @@
+<?php
+
+use app\exceptions\MyException;
+use Phalcon\Mvc\Micro\Collection;
+use app\responses\Response;
+use app\middlewares\CorsMiddleware;
+
+$application->before(new CorsMiddleware());
+
+$countries = new Collection();
+$countries->setHandler('app\controllers\CountryController', true);
+
+$countries->post('/cric/v1/countries', 'create');
+$countries->get('/cric/v1/countries/name/{name:[a-zA-Z]+}', 'searchByName');
+
+$application->mount($countries);
+
+$application->after(function() use($application) {
+    $application->response->setContentType('application/json', 'UTF-8');
+    $output_content = json_encode(Response::withData($application->getReturnedValue()), JSON_UNESCAPED_SLASHES);
+
+    $application->response->setContent($output_content);
+    $application->response->send();
+});
+
+$application->notFound(function () use ($application) {
+    $application->response->setStatusCode(404, 'Not Found');
+    $application->response->sendHeaders();
+
+    $message = 'Action Not Found';
+    $application->response->setContent($message);
+    $application->response->send();
+});
+
+$application->error(function(Throwable $ex) use($application) {
+    $description = $ex->getMessage();
+    $http_status_code = 500;
+    if($ex instanceof MyException)
+    {
+        $my_exception = $ex;
+        $description = $my_exception->description;
+        $http_status_code = $my_exception->http_status_code;
+    }
+
+    $response = Response::withError($description);
+
+    $application->response->setContentType('application/json', 'UTF-8');
+    $output_content = json_encode($response, JSON_UNESCAPED_SLASHES);
+    $application->response->setContent($output_content);
+    $application->response->setStatusCode($http_status_code);
+    $application->response->send();
+    exit;
+});

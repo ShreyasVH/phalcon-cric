@@ -1,0 +1,10 @@
+# php path
+export PATH=
+
+export PORT=
+
+export MYSQL_IP=
+export MYSQL_PORT=
+export MYSQL_DB=
+export MYSQL_USER=
+export MYSQL_PASSWORD=
