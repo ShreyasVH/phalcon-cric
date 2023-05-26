@@ -39,11 +39,14 @@ class CountryController extends BaseController
         $page = $this->request->getQuery('page', 'int', 1);
         $limit = $this->request->getQuery('limit', 'int', 25);
         $countries = $this->country_service->getAll($page, $limit);
-//        var_dump($countries);die;
         $countryResponses = array_map(function ($country) {
             return CountryResponse::from_country($country);
         }, $countries);
-        $totalCount = $this->country_service->getTotalCount();
+        $totalCount = 0;
+        if($page == 1)
+        {
+            $totalCount = $this->country_service->getTotalCount();
+        }
         $paginatedResponse = new PaginatedResponse($totalCount, $countryResponses, $page, $limit);
         return $this->ok($paginatedResponse);
     }
