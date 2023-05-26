@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\requests\countries\CreateRequest;
 use app\responses\CountryResponse;
+use app\responses\PaginatedResponse;
 use app\responses\Response;
 use app\services\CountryService;
 
@@ -21,16 +22,29 @@ class CountryController extends BaseController
         $create_request = CreateRequest::fromPostRequest($this->request->getJsonRawBody(true));
         $country = $this->country_service->create($create_request);
 
-        return Response::withData(CountryResponse::from_country($country));
+        return $this->created(CountryResponse::from_country($country));
     }
 
     public function searchByName($name)
     {
         $countries = $this->country_service->searchByName($name);
-//        var_dump($countries);die;
-        return Response::withData(array_map(function ($country) {
-//            var_dump($country);die;
+        $countryResponses = array_map(function ($country) {
             return CountryResponse::from_country($country);
-        }, $countries));
+        }, $countries);
+        return $this->ok($countryResponses);
+    }
+
+    public function getAll()
+    {
+        $page = $this->request->getQuery('page', 'int', 1);
+        $limit = $this->request->getQuery('limit', 'int', 25);
+        $countries = $this->country_service->getAll($page, $limit);
+//        var_dump($countries);die;
+        $countryResponses = array_map(function ($country) {
+            return CountryResponse::from_country($country);
+        }, $countries);
+        $totalCount = $this->country_service->getTotalCount();
+        $paginatedResponse = new PaginatedResponse($totalCount, $countryResponses, $page, $limit);
+        return $this->ok($paginatedResponse);
     }
 }

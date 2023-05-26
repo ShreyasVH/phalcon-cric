@@ -12,16 +12,17 @@ $countries->setHandler('app\controllers\CountryController', true);
 
 $countries->post('/cric/v1/countries', 'create');
 $countries->get('/cric/v1/countries/name/{name:[a-zA-Z]+}', 'searchByName');
+$countries->get('/cric/v1/countries', 'getAll');
 
 $application->mount($countries);
 
-$application->after(function() use($application) {
-    $application->response->setContentType('application/json', 'UTF-8');
-    $output_content = json_encode(Response::withData($application->getReturnedValue()), JSON_UNESCAPED_SLASHES);
+// $application->after(function() use($application) {
+//     $application->response->setContentType('application/json', 'UTF-8');
+//     $output_content = json_encode(Response::withData($application->getReturnedValue()), JSON_UNESCAPED_SLASHES);
 
-    $application->response->setContent($output_content);
-    $application->response->send();
-});
+//     $application->response->setContent($output_content);
+//     $application->response->send();
+// });
 
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');

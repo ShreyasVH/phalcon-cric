@@ -24,4 +24,14 @@ class CountryRepository
     {
         return Country::findByNamePattern($name);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return Country::getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return Country::getTotalCount();
+    }
 }

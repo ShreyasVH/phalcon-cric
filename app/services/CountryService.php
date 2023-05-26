@@ -33,4 +33,14 @@ class CountryService
     {
         return $this->country_repository->findByNamePattern($name);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return $this->country_repository->getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return $this->country_repository->getTotalCount();
+    }
 }

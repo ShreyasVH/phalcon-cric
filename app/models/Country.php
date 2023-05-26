@@ -1,6 +1,8 @@
 <?php
 namespace app\models;
 
+use Phalcon\Paginator\Adapter\Model as ModelPaginator;
+
 use app\requests\countries\CreateRequest;
 
 class Country extends BaseModel
@@ -42,14 +44,26 @@ class Country extends BaseModel
                 'name' => '%' . $name . '%'
             ]
         ]);
-//        var_dump($countries);die;
-
-//        return $countries->toArray(self::class);
-//        $countryObjects = [];
-//        foreach ($countries as $country) {
-//            $countryObjects[] = $country;
-//        }
 
         return self::toList($countries);
+    }
+
+    public static function getAll(int $page, int $limit)
+    {
+        $paginator = new ModelPaginator([
+            'model' => Country::class,
+            'parameters' => [
+                'order' => 'name ASC',
+            ],
+            'limit' => $limit,
+            'page' => $page,
+        ]);
+
+        return self::toList($paginator->paginate()->getItems());
+    }
+
+    public static function getTotalCount() : int
+    {
+        return self::count();
     }
 }
