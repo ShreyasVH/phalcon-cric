@@ -16,13 +16,12 @@ $countries->get('/cric/v1/countries', 'getAll');
 
 $application->mount($countries);
 
-// $application->after(function() use($application) {
-//     $application->response->setContentType('application/json', 'UTF-8');
-//     $output_content = json_encode(Response::withData($application->getReturnedValue()), JSON_UNESCAPED_SLASHES);
+$stadiums = new Collection();
+$stadiums->setHandler('app\controllers\StadiumController', true);
 
-//     $application->response->setContent($output_content);
-//     $application->response->send();
-// });
+$stadiums->post('/cric/v1/stadiums', 'create');
+
+$application->mount($stadiums);
 
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');

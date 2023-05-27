@@ -43,4 +43,9 @@ class CountryService
     {
         return $this->country_repository->getTotalCount();
     }
+
+    public function getById(int $id)
+    {
+        return $this->country_repository->getById($id);
+    }
 }

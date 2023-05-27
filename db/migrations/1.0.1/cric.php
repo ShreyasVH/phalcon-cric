@@ -3,13 +3,12 @@
 use Phalcon\Db\Column;
 use Phalcon\Db\Exception;
 use Phalcon\Db\Index;
-use Phalcon\Db\Reference;
 use Phalcon\Migrations\Mvc\Model\Migration;
 
 /**
- * Class CountriesMigration_100
+ * Class CricMigration_101
  */
-class CountriesMigration_100 extends Migration
+class CricMigration_101 extends Migration
 {
     /**
      * Define the table structure
@@ -69,5 +68,6 @@ class CountriesMigration_100 extends Migration
      */
     public function down(): void
     {
+        $this->getConnection()->dropTable('countries');
     }
 }

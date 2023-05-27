@@ -66,4 +66,14 @@ class Country extends BaseModel
     {
         return self::count();
     }
+
+    public static function getById(int $id) : Country | null
+    {
+        return self::findFirst([
+            'conditions' => 'id LIKE :id:',
+            'bind' => [
+                'id' => $id
+            ]
+        ]);
+    }
 }

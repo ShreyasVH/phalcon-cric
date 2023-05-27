@@ -34,4 +34,9 @@ class CountryRepository
     {
         return Country::getTotalCount();
     }
+
+    public function getById(int $id)
+    {
+        return Country::getById($id);
+    }
 }
