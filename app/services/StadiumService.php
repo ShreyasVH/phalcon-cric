@@ -28,4 +28,14 @@ class StadiumService
         }
         return $this->stadiumRepository->create($create_request);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return $this->stadiumRepository->getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return $this->stadiumRepository->getTotalCount();
+    }
 }

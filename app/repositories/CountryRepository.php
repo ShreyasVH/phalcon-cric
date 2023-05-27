@@ -39,4 +39,9 @@ class CountryRepository
     {
         return Country::getById($id);
     }
+
+    public function getByIds(array $ids)
+    {
+        return Country::getByIds($ids);
+    }
 }

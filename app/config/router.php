@@ -20,6 +20,7 @@ $stadiums = new Collection();
 $stadiums->setHandler('app\controllers\StadiumController', true);
 
 $stadiums->post('/cric/v1/stadiums', 'create');
+$stadiums->get('/cric/v1/stadiums', 'getAll');
 
 $application->mount($stadiums);
 

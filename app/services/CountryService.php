@@ -48,4 +48,9 @@ class CountryService
     {
         return $this->country_repository->getById($id);
     }
+
+    public function getByIds(array $ids)
+    {
+        return $this->country_repository->getByIds($ids);
+    }
 }

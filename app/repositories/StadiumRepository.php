@@ -18,4 +18,14 @@ class StadiumRepository
     {
         return Stadium::findByNameAndCountryId($name, $countryId);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return Stadium::getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return Stadium::getTotalCount();
+    }
 }

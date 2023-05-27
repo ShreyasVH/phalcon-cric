@@ -1,6 +1,8 @@
 <?php
 namespace app\models;
 
+use Phalcon\Paginator\Adapter\Model as ModelPaginator;
+
 use app\requests\stadiums\CreateRequest;
 
 class Stadium extends BaseModel
@@ -37,5 +39,24 @@ class Stadium extends BaseModel
                 'countryId' => $countryId
             ]
         ]);
+    }
+
+    public static function getAll(int $page, int $limit)
+    {
+        $paginator = new ModelPaginator([
+            'model' => Stadium::class,
+            'parameters' => [
+                'order' => 'name ASC',
+            ],
+            'limit' => $limit,
+            'page' => $page,
+        ]);
+
+        return self::toList($paginator->paginate()->getItems());
+    }
+
+    public static function getTotalCount() : int
+    {
+        return self::count();
     }
 }
