@@ -24,6 +24,13 @@ $stadiums->get('/cric/v1/stadiums', 'getAll');
 
 $application->mount($stadiums);
 
+$teams = new Collection();
+$teams->setHandler('app\controllers\TeamController', true);
+
+$teams->post('/cric/v1/teams', 'create');
+
+$application->mount($teams);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();
