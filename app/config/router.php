@@ -28,6 +28,7 @@ $teams = new Collection();
 $teams->setHandler('app\controllers\TeamController', true);
 
 $teams->post('/cric/v1/teams', 'create');
+$teams->get('/cric/v1/teams', 'getAll');
 
 $application->mount($teams);
 

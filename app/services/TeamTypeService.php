@@ -21,4 +21,9 @@ class TeamTypeService
     {
         return $this->team_type_repository->getById($id);
     }
+
+    public function getByIds(array $ids)
+    {
+        return $this->team_type_repository->getByIds($ids);
+    }
 }

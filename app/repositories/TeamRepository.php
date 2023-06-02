@@ -18,4 +18,14 @@ class TeamRepository
     {
         return Team::findByNameAndCountryIdAndTypeId($name, $countryId, $typeId);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return Team::getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return Team::getTotalCount();
+    }
 }

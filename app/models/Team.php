@@ -2,6 +2,7 @@
 namespace app\models;
 
 use app\requests\teams\CreateRequest;
+use Phalcon\Paginator\Adapter\Model as ModelPaginator;
 
 class Team extends BaseModel
 {
@@ -36,5 +37,24 @@ class Team extends BaseModel
                 'typeId' => $typeId
             ]
         ]);
+    }
+
+    public static function getAll(int $page, int $limit)
+    {
+        $paginator = new ModelPaginator([
+            'model' => Team::class,
+            'parameters' => [
+                'order' => 'name ASC',
+            ],
+            'limit' => $limit,
+            'page' => $page,
+        ]);
+
+        return self::toList($paginator->paginate()->getItems());
+    }
+
+    public static function getTotalCount() : int
+    {
+        return self::count();
     }
 }

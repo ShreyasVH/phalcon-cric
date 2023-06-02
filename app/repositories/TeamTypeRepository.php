@@ -10,4 +10,9 @@ class TeamTypeRepository
     {
         return TeamType::getById($id);
     }
+
+    public function getByIds(array $ids)
+    {
+        return TeamType::getByIds($ids);
+    }
 }

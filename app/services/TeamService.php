@@ -28,4 +28,14 @@ class TeamService
         }
         return $this->teamRepository->create($create_request);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return $this->teamRepository->getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return $this->teamRepository->getTotalCount();
+    }
 }
