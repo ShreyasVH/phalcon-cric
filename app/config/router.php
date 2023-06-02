@@ -32,6 +32,13 @@ $teams->get('/cric/v1/teams', 'getAll');
 
 $application->mount($teams);
 
+$tours = new Collection();
+$tours->setHandler('app\controllers\TourController', true);
+
+$tours->post('/cric/v1/tours', 'create');
+
+$application->mount($tours);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();

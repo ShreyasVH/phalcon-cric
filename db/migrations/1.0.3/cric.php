@@ -84,7 +84,7 @@ class CricMigration_103 extends Migration
                     [
                         'type' => Column::TYPE_VARCHAR,
                         'notNull' => true,
-                        'size' => 200,
+                        'size' => 100,
                         'after' => 'id'
                     ]
                 ),
