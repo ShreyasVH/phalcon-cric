@@ -39,6 +39,13 @@ $tours->post('/cric/v1/tours', 'create');
 
 $application->mount($tours);
 
+$players = new Collection();
+$players->setHandler('app\controllers\PlayerController', true);
+
+$players->post('/cric/v1/players', 'create');
+
+$application->mount($players);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();
