@@ -40,4 +40,23 @@ class Player extends BaseModel
             ]
         ]);
     }
+
+    public static function getAll(int $page, int $limit)
+    {
+        $paginator = new ModelPaginator([
+            'model' => Player::class,
+            'parameters' => [
+                'order' => 'name ASC',
+            ],
+            'limit' => $limit,
+            'page' => $page,
+        ]);
+
+        return self::toList($paginator->paginate()->getItems());
+    }
+
+    public static function getTotalCount() : int
+    {
+        return self::count();
+    }
 }

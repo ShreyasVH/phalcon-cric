@@ -28,4 +28,14 @@ class PlayerService
         }
         return $this->playerRepository->create($create_request);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return $this->playerRepository->getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return $this->playerRepository->getTotalCount();
+    }
 }

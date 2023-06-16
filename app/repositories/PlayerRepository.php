@@ -18,4 +18,14 @@ class PlayerRepository
     {
         return Player::findByNameAndCountryIdAndDateOfBirth($name, $countryId, $dateOfBirth);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return Player::getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return Player::getTotalCount();
+    }
 }

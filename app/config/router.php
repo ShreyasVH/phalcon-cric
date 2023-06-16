@@ -43,6 +43,7 @@ $players = new Collection();
 $players->setHandler('app\controllers\PlayerController', true);
 
 $players->post('/cric/v1/players', 'create');
+$players->get('/cric/v1/players', 'getall');
 
 $application->mount($players);
 
