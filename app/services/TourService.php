@@ -33,4 +33,9 @@ class TourService
     {
         return $this->tour_repository->get_by_id($id);
     }
+
+    public function get_by_ids(array $ids)
+    {
+        return $this->tour_repository->get_by_ids($ids);
+    }
 }

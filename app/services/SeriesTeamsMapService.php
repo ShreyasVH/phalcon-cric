@@ -19,4 +19,9 @@ class SeriesTeamsMapService
     {
         $this->series_teams_map_repository->add($series_id, $team_ids);
     }
+
+    public function get_by_series_ids(array $series_ids)
+    {
+        return $this->series_teams_map_repository->get_by_series_ids($series_ids);
+    }
 }

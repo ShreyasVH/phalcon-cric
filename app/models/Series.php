@@ -44,4 +44,23 @@ class Series extends BaseModel
             ]
         ]);
     }
+
+    public static function getAll(int $page, int $limit): array
+    {
+        $paginator = new ModelPaginator([
+            'model' => self::class,
+            'parameters' => [
+                'order' => 'name ASC',
+            ],
+            'limit' => $limit,
+            'page' => $page,
+        ]);
+
+        return self::toList($paginator->paginate()->getItems());
+    }
+
+    public static function getTotalCount() : int
+    {
+        return self::count();
+    }
 }

@@ -33,4 +33,12 @@ class SeriesTeamsMap extends BaseModel
             $series_teams_map->save();
         }
     }
+
+    public static function get_by_series_ids(array $series_ids)
+    {
+        return self::toList(self::find([
+            'conditions' => 'series_id IN ({seriesIds:array})',
+            'bind' => ['seriesIds' => $series_ids]
+        ]));
+    }
 }

@@ -12,4 +12,9 @@ class GameTypeRepository
     {
         return GameType::getById($id);
     }
+
+    public function get_by_ids(array $ids)
+    {
+        return GameType::getByIds($ids);
+    }
 }

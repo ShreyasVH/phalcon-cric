@@ -33,4 +33,14 @@ class SeriesService
         }
         return $this->series_repository->create($create_request);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return $this->series_repository->getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return $this->series_repository->getTotalCount();
+    }
 }

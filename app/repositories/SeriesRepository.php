@@ -18,4 +18,14 @@ class SeriesRepository
     {
         return Series::findByNameAndTourIdAndGameTypeId($name, $tourId, $gameTypeId);
     }
+
+    public function getAll(int $page, int $limit)
+    {
+        return Series::getAll($page, $limit);
+    }
+
+    public function getTotalCount()
+    {
+        return Series::getTotalCount();
+    }
 }

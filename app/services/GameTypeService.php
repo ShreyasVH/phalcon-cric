@@ -18,4 +18,9 @@ class GameTypeService
     {
         return $this->game_type_repository->getById($id);
     }
+
+    public function get_by_ids(array $ids)
+    {
+        return $this->game_type_repository->get_by_ids($ids);
+    }
 }

@@ -12,4 +12,9 @@ class SeriesTeamsMapRepository
     {
         SeriesTeamsMap::add($series_id, $team_ids);
     }
+
+    public function get_by_series_ids(array $series_ids)
+    {
+        return SeriesTeamsMap::get_by_series_ids($series_ids);
+    }
 }

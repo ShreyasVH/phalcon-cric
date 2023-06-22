@@ -24,4 +24,9 @@ class TourRepository
     {
         return Tour::getById($id);
     }
+
+    public function get_by_ids(array $ids)
+    {
+        return Tour::getByIds($ids);
+    }
 }

@@ -10,4 +10,9 @@ class SeriesTypeRepository
     {
         return SeriesType::getById($id);
     }
+
+    public function get_by_ids(array $ids)
+    {
+        return SeriesType::getByIds($ids);
+    }
 }

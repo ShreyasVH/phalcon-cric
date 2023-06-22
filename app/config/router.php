@@ -51,6 +51,7 @@ $series = new Collection();
 $series->setHandler('app\controllers\SeriesController', true);
 
 $series->post('/cric/v1/series', 'create');
+$series->get('/cric/v1/series', 'get_all');
 
 $application->mount($series);
 
