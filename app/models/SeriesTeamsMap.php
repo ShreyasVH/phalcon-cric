@@ -41,4 +41,23 @@ class SeriesTeamsMap extends BaseModel
             'bind' => ['seriesIds' => $series_ids]
         ]));
     }
+
+    public static function remove(int $series_id, array $team_ids)
+    {
+        if(!empty($team_ids))
+        {
+            $series_teams_maps = self::find([
+                'conditions' => 'series_id = :seriesId: and team_id IN ({teamIds:array})',
+                'bind' => [
+                    'seriesId' => $series_id,
+                    'teamIds' => $team_ids
+                ]
+            ]);
+
+            foreach($series_teams_maps as $series_teams_map)
+            {
+                $series_teams_map->delete();
+            }
+        }
+    }
 }

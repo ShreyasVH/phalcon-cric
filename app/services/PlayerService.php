@@ -38,4 +38,9 @@ class PlayerService
     {
         return $this->playerRepository->getTotalCount();
     }
+
+    public function get_by_ids(array $ids)
+    {
+        return Player::getByIds($ids);
+    }
 }

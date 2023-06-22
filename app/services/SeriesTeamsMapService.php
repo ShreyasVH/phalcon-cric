@@ -4,6 +4,7 @@
 namespace app\services;
 
 
+use app\models\SeriesTeamsMap;
 use app\repositories\SeriesTeamsMapRepository;
 
 class SeriesTeamsMapService
@@ -23,5 +24,10 @@ class SeriesTeamsMapService
     public function get_by_series_ids(array $series_ids)
     {
         return $this->series_teams_map_repository->get_by_series_ids($series_ids);
+    }
+
+    public function remove(int $series_id, array $team_ids)
+    {
+        SeriesTeamsMap::remove($series_id, $team_ids);
     }
 }
