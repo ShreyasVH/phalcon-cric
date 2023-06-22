@@ -47,6 +47,13 @@ $players->get('/cric/v1/players', 'getall');
 
 $application->mount($players);
 
+$series = new Collection();
+$series->setHandler('app\controllers\SeriesController', true);
+
+$series->post('/cric/v1/series', 'create');
+
+$application->mount($series);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();

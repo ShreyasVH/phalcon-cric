@@ -28,4 +28,9 @@ class TourService
         }
         return $this->tour_repository->create($create_request);
     }
+
+    public function get_by_id($id)
+    {
+        return $this->tour_repository->get_by_id($id);
+    }
 }

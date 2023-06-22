@@ -19,4 +19,9 @@ class TourRepository
     {
         return Tour::findByNameAndStartTime($name, $startTime);
     }
+
+    public function get_by_id(int $id)
+    {
+        return Tour::getById($id);
+    }
 }

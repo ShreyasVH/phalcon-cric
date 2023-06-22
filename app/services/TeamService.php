@@ -38,4 +38,9 @@ class TeamService
     {
         return $this->teamRepository->getTotalCount();
     }
+
+    public function get_by_ids(array $ids): array
+    {
+        return $this->teamRepository->get_by_ids($ids);
+    }
 }

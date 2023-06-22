@@ -57,4 +57,12 @@ class Team extends BaseModel
     {
         return self::count();
     }
+
+    public static function get_by_ids(array $ids): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'id IN ({ids:array})',
+            'bind' => ['ids' => $ids]
+        ]));
+    }
 }

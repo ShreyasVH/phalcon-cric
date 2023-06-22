@@ -28,4 +28,13 @@ class TeamRepository
     {
         return Team::getTotalCount();
     }
+
+    /**
+     * @param int[] $ids
+     * @return array
+     */
+    public function get_by_ids(array $ids): array
+    {
+        return Team::get_by_ids($ids);
+    }
 }

@@ -14,6 +14,7 @@ class TeamResponse
     public function __construct(int $id, string $name, CountryResponse $country, TeamTypeResponse $teamTypeResponse)
     {
         $this->id = $id;
+        $this->name = $name;
         $this->country = $country;
         $this->type = $teamTypeResponse;
     }
