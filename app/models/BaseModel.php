@@ -8,7 +8,7 @@ use Phalcon\Mvc\Model;
 
 class BaseModel extends Model
 {
-    public static function toList(Model\ResultsetInterface $result)
+    public static function toList($result): array
     {
         $list = [];
 

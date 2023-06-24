@@ -38,4 +38,14 @@ class TourService
     {
         return $this->tour_repository->get_by_ids($ids);
     }
+
+    public function get_all_for_year(int $year, int $page, int $limit): array
+    {
+        return Tour::get_all_for_year($year, $page, $limit);
+    }
+
+    public function get_total_count_for_year(int $year): int
+    {
+        return Tour::get_total_count_for_year($year);
+    }
 }

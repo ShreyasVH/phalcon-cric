@@ -36,6 +36,7 @@ $tours = new Collection();
 $tours->setHandler('app\controllers\TourController', true);
 
 $tours->post('/cric/v1/tours', 'create');
+$tours->get('/cric/v1/tours/year/{year:[0-9]+}', 'get_all_for_year');
 
 $application->mount($tours);
 
