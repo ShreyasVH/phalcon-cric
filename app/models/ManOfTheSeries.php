@@ -33,10 +33,16 @@ class ManOfTheSeries extends BaseModel
 
     public static function get_by_series_ids(array $series_ids)
     {
-        return self::toList(self::find([
-            'conditions' => 'series_id IN ({seriesIds:array})',
-            'bind' => ['seriesIds' => $series_ids]
-        ]));
+        $man_of_the_series_list = [];
+
+        if(!empty($series_ids))
+        {
+            $man_of_the_series_list = self::toList(self::find([
+                'conditions' => 'series_id IN ({seriesIds:array})',
+                'bind' => ['seriesIds' => $series_ids]
+            ]));
+        }
+        return $man_of_the_series_list;
     }
 
     public static function remove(int $series_id, array $player_ids)

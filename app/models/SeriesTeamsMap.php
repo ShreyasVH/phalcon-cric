@@ -36,10 +36,16 @@ class SeriesTeamsMap extends BaseModel
 
     public static function get_by_series_ids(array $series_ids)
     {
-        return self::toList(self::find([
-            'conditions' => 'series_id IN ({seriesIds:array})',
-            'bind' => ['seriesIds' => $series_ids]
-        ]));
+        $series_teams_maps = [];
+        if(!empty($series_ids))
+        {
+            $series_teams_maps = self::toList(self::find([
+                'conditions' => 'series_id IN ({seriesIds:array})',
+                'bind' => ['seriesIds' => $series_ids]
+            ]));
+        }
+
+        return $series_teams_maps;
     }
 
     public static function remove(int $series_id, array $team_ids)

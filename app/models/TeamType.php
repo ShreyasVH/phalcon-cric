@@ -21,12 +21,4 @@ class TeamType extends BaseModel
             ]
         ]);
     }
-
-    public static function getByIds(array $ids) : array
-    {
-        return self::toList(self::find([
-            'conditions' => 'id IN ({ids:array})',
-            'bind' => ['ids' => $ids]
-        ]));
-    }
 }

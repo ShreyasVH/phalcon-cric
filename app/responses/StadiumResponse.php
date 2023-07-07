@@ -9,10 +9,10 @@ class StadiumResponse
     public int $id;
     public string $name;
     public string $city;
-    public string $state;
+    public ?string $state;
     public CountryResponse $country;
 
-    public function __construct(int $id, string $name, string $city, string $state, CountryResponse $country)
+    public function __construct(int $id, string $name, string $city, ?string $state, CountryResponse $country)
     {
         $this->id = $id;
         $this->name = $name;

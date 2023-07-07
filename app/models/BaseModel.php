@@ -32,9 +32,21 @@ class BaseModel extends Model
 
     public static function getByIds(array $ids) : array
     {
-        return self::toList(self::find([
-            'conditions' => 'id IN ({ids:array})',
-            'bind' => ['ids' => $ids]
-        ]));
+        $entities = [];
+
+        if(!empty($ids))
+        {
+            $entities = self::toList(self::find([
+                'conditions' => 'id IN ({ids:array})',
+                'bind' => ['ids' => $ids]
+            ]));
+        }
+
+        return $entities;
+    }
+
+    public static function get_by_ids(array $ids) : array
+    {
+        return self::getByIds($ids);
     }
 }

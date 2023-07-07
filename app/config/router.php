@@ -57,6 +57,13 @@ $series->put('/cric/v1/series/{id:[0-9]+}', 'update');
 
 $application->mount($series);
 
+$matches = new Collection();
+$matches->setHandler('app\controllers\MatchController', true);
+
+$matches->post('/cric/v1/matches', 'create');
+
+$application->mount($matches);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();

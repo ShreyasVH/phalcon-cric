@@ -38,4 +38,9 @@ class StadiumService
     {
         return $this->stadiumRepository->getTotalCount();
     }
+
+    public function get_by_id(int $stadium_id)
+    {
+        return Stadium::getById($stadium_id);
+    }
 }

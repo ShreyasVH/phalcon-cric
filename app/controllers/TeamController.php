@@ -62,6 +62,7 @@ class TeamController extends BaseController
             return $country->id;
         }, $countries), $countries);
 
+
         $typeIds = array_map(function (Team $team) {
             return $team->type_id;
         }, $teams);
@@ -69,6 +70,7 @@ class TeamController extends BaseController
         $typeMap = array_combine(array_map(function (TeamType $teamType) {
             return $teamType->id;
         }, $types), $types);
+
 
         $teamResponses = array_map(function (Team $team) use ($countryMap, $typeMap) {
             return TeamResponse::withTeamAndCountryAndType($team, CountryResponse::from_country($countryMap[$team->country_id]), TeamTypeResponse::from_team_type($typeMap[$team->type_id]));
