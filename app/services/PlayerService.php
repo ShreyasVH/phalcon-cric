@@ -43,4 +43,9 @@ class PlayerService
     {
         return Player::getByIds($ids);
     }
+
+    public function get_by_id(int $id)
+    {
+        return Player::get_by_id($id);
+    }
 }

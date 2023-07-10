@@ -6,6 +6,7 @@ namespace app\models;
 
 
 use app\requests\matches\BattingScoreRequest;
+use Phalcon\Mvc\Model\Query;
 
 class BattingScore extends BaseModel
 {

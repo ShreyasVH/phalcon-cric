@@ -9,14 +9,14 @@ use app\models\BowlingFigure;
 class BowlingFigureResponse
 {
     public int $id;
-    public PlayerResponse $player;
+    public PlayerMiniResponse $player;
     public int $balls;
     public int $maidens;
     public int $runs;
     public int $wickets;
     public int $innings;
 
-    public function __construct(BowlingFigure $bowling_figure, PlayerResponse $player)
+    public function __construct(BowlingFigure $bowling_figure, PlayerMiniResponse $player)
     {
         $this->id = $bowling_figure->id;
         $this->player = $player;

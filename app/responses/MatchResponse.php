@@ -58,7 +58,7 @@ class MatchResponse
         $this->startTime = $match->start_time;
         $this->players = $players;
 
-        $player_map = array_combine(array_map(function (PlayerResponse $player) {
+        $player_map = array_combine(array_map(function (PlayerMiniResponse $player) {
             return $player->id;
         }, $players), $players);
 

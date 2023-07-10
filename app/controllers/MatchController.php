@@ -30,7 +30,7 @@ use app\responses\DismissalModeResponse;
 use app\responses\ExtrasResponse;
 use app\responses\ExtrasTypeResponse;
 use app\responses\MatchResponse;
-use app\responses\PlayerResponse;
+use app\responses\PlayerMiniResponse;
 use app\responses\ResultTypeResponse;
 use app\responses\StadiumResponse;
 use app\responses\TeamResponse;
@@ -254,14 +254,14 @@ class MatchController extends BaseController
                     if(null != $batting_score->bowlerId)
                     {
                         $bowler_player = $player_map[$batting_score->bowlerId];
-                        $bowler = PlayerResponse::withPlayerAndCountry($bowler_player, CountryResponse::from_country($country_map[$bowler_player->country_id]));
+                        $bowler = PlayerMiniResponse::withPlayerAndCountry($bowler_player, CountryResponse::from_country($country_map[$bowler_player->country_id]));
                     }
 
                     if(null != $batting_score->fielderIds)
                     {
                         $fielders = array_map(function (int $fielder_id) use ($player_map, $country_map) {
                             $fielder_player = $player_map[$fielder_id];
-                            return PlayerResponse::withPlayerAndCountry($fielder_player, CountryResponse::from_country($country_map[$fielder_player->country_id]));
+                            return PlayerMiniResponse::withPlayerAndCountry($fielder_player, CountryResponse::from_country($country_map[$fielder_player->country_id]));
                         }, $batting_score->fielderIds);
 
                         $score_fielder_map[$batting_score_from_db->id] = $batting_score->fielderIds;
@@ -272,7 +272,7 @@ class MatchController extends BaseController
 
                 $batting_score_responses[] = new BattingScoreResponse(
                     $batting_score_from_db,
-                    PlayerResponse::withPlayerAndCountry($batsman_player, CountryResponse::from_country($country_map[$batsman_player->country_id])),
+                    PlayerMiniResponse::withPlayerAndCountry($batsman_player, CountryResponse::from_country($country_map[$batsman_player->country_id])),
                     $dismissal_mode_response,
                     $bowler,
                     $fielders
@@ -294,7 +294,7 @@ class MatchController extends BaseController
                 $bowling_figure = $bowling_figure_map[$key];
 
                 $bowler_player = $player_map[$bowling_figure_request->playerId];
-                $bowling_figure_responses[] = new BowlingFigureResponse($bowling_figure, PlayerResponse::withPlayerAndCountry($bowler_player, CountryResponse::from_country($country_map[$bowler_player->country_id])));
+                $bowling_figure_responses[] = new BowlingFigureResponse($bowling_figure, PlayerMiniResponse::withPlayerAndCountry($bowler_player, CountryResponse::from_country($country_map[$bowler_player->country_id])));
             }
 
             $extras_types = $this->extras_type_service->get_all();
@@ -331,7 +331,7 @@ class MatchController extends BaseController
         }
 
         $player_responses = array_map(function (Player $player) use ($country_map) {
-            return PlayerResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
+            return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
         }, $all_players);
 
         $match_response = new MatchResponse(

@@ -49,4 +49,9 @@ class BaseModel extends Model
     {
         return self::getByIds($ids);
     }
+
+    public static function get_by_id(int $id)
+    {
+        return self::getById($id);
+    }
 }

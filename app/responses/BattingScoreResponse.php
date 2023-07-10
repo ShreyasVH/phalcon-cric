@@ -9,18 +9,18 @@ use app\models\BattingScore;
 class BattingScoreResponse
 {
     public int $id;
-    public PlayerResponse $player;
+    public PlayerMiniResponse $player;
     public int $runs;
     public int $balls;
     public int $fours;
     public int $sixes;
     public ?DismissalModeResponse $dismissalMode;
-    public ?PlayerResponse $bowler;
+    public ?PlayerMiniResponse $bowler;
     public array $fielders;
     public int $innings;
     public ?int $number;
 
-    public function __construct(BattingScore $batting_score, PlayerResponse $player, ?DismissalModeResponse $dismissal_mode, ?PlayerResponse $bowler, array $fielders)
+    public function __construct(BattingScore $batting_score, PlayerMiniResponse $player, ?DismissalModeResponse $dismissal_mode, ?PlayerMiniResponse $bowler, array $fielders)
     {
         $this->id = $batting_score->id;
         $this->player = $player;
