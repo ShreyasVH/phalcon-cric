@@ -8,6 +8,7 @@ class BattingStats
 {
     public int $runs;
     public int $balls;
+    public int $innings;
     public int $fours;
     public int $sixes;
     public int $notOuts = 0;
@@ -24,6 +25,7 @@ class BattingStats
     {
         $this->runs = $basic_stats['runs'] ?? 0;
         $this->balls = $basic_stats['balls'];
+        $this->innings = $basic_stats['innings'];
         $this->fours = $basic_stats['fours'];
         $this->sixes = $basic_stats['sixes'];
         $this->highest = $basic_stats['highest'];

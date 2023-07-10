@@ -114,6 +114,7 @@ class PlayerController extends BaseController
             foreach($basic_batting_stats as $game_type => $batting_stats)
             {
                 $batting_stats = new BattingStats($batting_stats);
+                $batting_stats->notOuts = $batting_stats->innings - ($dismissal_count_map[$game_type] ?? 0);
 
                 if(($dismissal_count_map[$game_type] ?? 0) > 0)
                 {
