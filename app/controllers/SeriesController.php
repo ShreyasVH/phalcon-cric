@@ -85,7 +85,7 @@ class SeriesController extends BaseController
         /** @var Team[] $teams */
         foreach($teams as $team)
         {
-            $team_type_ids[] = $team->id;
+            $team_type_ids[] = $team->type_id;
             $country_ids[] = $team->country_id;
         }
 

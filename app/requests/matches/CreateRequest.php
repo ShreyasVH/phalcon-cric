@@ -9,12 +9,12 @@ class CreateRequest
     public int $seriesId;
     public int $team1Id;
     public int $team2Id;
-    public ?int $tossWinnerId;
-    public ?int $batFirstId;
+    public ?int $tossWinnerId = null;
+    public ?int $batFirstId = null;
     public int $resultTypeId;
-    public ?int $winnerId;
-    public ?int $winMargin;
-    public ?int $winMarginTypeId;
+    public ?int $winnerId = null;
+    public ?int $winMargin = null;
+    public ?int $winMarginTypeId = null;
     public int $stadiumId;
     public $startTime;
     public array $players = [];

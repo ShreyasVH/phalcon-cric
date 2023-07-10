@@ -13,12 +13,12 @@ class MatchResponse
     public SeriesMiniResponse $series;
     public TeamResponse $team1;
     public TeamResponse $team2;
-    public TeamResponse $tossWinner;
-    public TeamResponse $batFirst;
+    public ?TeamResponse $tossWinner = null;
+    public ?TeamResponse $batFirst = null;
     public ResultTypeResponse $resultType;
-    public TeamResponse $winner;
-    public int $winMargin;
-    public ?WinMarginTypeResponse $winMarginType;
+    public ?TeamResponse $winner = null;
+    public ?int $winMargin = null;
+    public ?WinMarginTypeResponse $winMarginType = null;
     public StadiumResponse $stadium;
     public $startTime;
     public array $players;
