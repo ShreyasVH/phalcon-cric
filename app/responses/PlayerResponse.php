@@ -6,7 +6,7 @@ namespace app\responses;
 
 use app\models\Player;
 
-class PlayerResponse
+class PlayerResponse implements \JsonSerializable
 {
     public int $id;
     public string $name;
@@ -29,5 +29,20 @@ class PlayerResponse
     public static function withPlayer(Player $player)
     {
         return new self($player->id, $player->name, $player->date_of_birth, $player->image);
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'country' => $this->country,
+            'dateOfBirth' => $this->dateOfBirth,
+            'image' => $this->image,
+            'dismissalStats' => empty($this->dismissalStats) ? new \stdClass() : $this->dismissalStats,
+            'battingStats' => empty($this->battingStats) ? new \stdClass() : $this->battingStats,
+            'bowlingStats' => empty($this->bowlingStats) ? new \stdClass() : $this->bowlingStats,
+            'fieldingStats' => empty($this->fieldingStats) ? new \stdClass() : $this->fieldingStats
+        ];
     }
 }
