@@ -9,6 +9,7 @@ class TourResponse
     public int $id;
     public string $name;
     public $startTime;
+    public array $seriesList;
 
     public function __construct(int $id, string $name, $startTime)
     {

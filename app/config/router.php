@@ -10,6 +10,9 @@ $application->before(new CorsMiddleware());
 $countries = new Collection();
 $countries->setHandler('app\controllers\CountryController', true);
 
+$countries->options('/{params:[a-zA-Z0-9\/]+}', function () use ($application) {
+});
+
 $countries->post('/cric/v1/countries', 'create');
 $countries->get('/cric/v1/countries/name/{name:[a-zA-Z]+}', 'searchByName');
 $countries->get('/cric/v1/countries', 'getAll');
@@ -37,6 +40,8 @@ $tours->setHandler('app\controllers\TourController', true);
 
 $tours->post('/cric/v1/tours', 'create');
 $tours->get('/cric/v1/tours/year/{year:[0-9]+}', 'get_all_for_year');
+$tours->get('/cric/v1/tours/years', 'get_all_years');
+$tours->get('/cric/v1/tours/{id:[0-9]+}', 'get_by_id');
 
 $application->mount($tours);
 

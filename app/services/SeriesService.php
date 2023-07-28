@@ -97,4 +97,9 @@ class SeriesService
 
         return $existing_series;
     }
+
+    public function get_by_tour_id(int $tour_id): array
+    {
+        return Series::get_by_tour_id($tour_id);
+    }
 }

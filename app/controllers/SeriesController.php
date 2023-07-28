@@ -25,7 +25,7 @@ use app\responses\TeamTypeResponse;
 use app\responses\GameTypeResponse;
 use app\responses\SeriesTypeResponse;
 use app\responses\SeriesResponse;
-use app\responses\TourResponse;
+use app\responses\TourMiniResponse;
 use app\services\CountryService;
 use app\services\GameTypeService;
 use app\services\ManOfTheSeriesService;
@@ -144,7 +144,7 @@ class SeriesController extends BaseController
             return TeamResponse::withTeamAndCountryAndType($team, CountryResponse::from_country($country_map[$team->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team->type_id]));
         }, $teams);
 
-        return $this->created(SeriesResponse::withAllData($series, CountryResponse::from_country($country_map[$series->home_country_id]), TourResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, []));
+        return $this->created(SeriesResponse::withAllData($series, CountryResponse::from_country($country_map[$series->home_country_id]), TourMiniResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, []));
     }
 
     public function get_all()
@@ -240,7 +240,7 @@ class SeriesController extends BaseController
         }, $players);
 
         $series_responses = array_map(function (Series $series) use ($country_map, $tour_map, $series_type_map, $game_type_map, $team_responses, $player_responses) {
-            return SeriesResponse::withAllData($series, CountryResponse::from_country($country_map[$series->home_country_id]), TourResponse::from_tour($tour_map[$series->tour_id]), SeriesTypeResponse::from_series_type($series_type_map[$series->type_id]), GameTypeResponse::from_game_type($game_type_map[$series->game_type_id]), $team_responses, $player_responses);
+            return SeriesResponse::withAllData($series, CountryResponse::from_country($country_map[$series->home_country_id]), TourMiniResponse::from_tour($tour_map[$series->tour_id]), SeriesTypeResponse::from_series_type($series_type_map[$series->type_id]), GameTypeResponse::from_game_type($game_type_map[$series->game_type_id]), $team_responses, $player_responses);
         }, $series_list);
 
         $paginatedResponse = new PaginatedResponse($total_count, $series_responses, $page, $limit);
@@ -442,6 +442,6 @@ class SeriesController extends BaseController
             return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
         }, $players);
 
-        return $this->ok(SeriesResponse::withAllData($existing_series, CountryResponse::from_country($country), TourResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, $player_responses));
+        return $this->ok(SeriesResponse::withAllData($existing_series, CountryResponse::from_country($country), TourMiniResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, $player_responses));
     }
 }

@@ -48,4 +48,9 @@ class TourService
     {
         return Tour::get_total_count_for_year($year);
     }
+
+    public function get_all_years(): array
+    {
+        return $this->tour_repository->get_all_years();
+    }
 }

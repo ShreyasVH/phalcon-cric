@@ -63,4 +63,15 @@ class Series extends BaseModel
     {
         return self::count();
     }
+
+    public static function get_by_tour_id(int $tour_id): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'tour_id = :tourId:',
+            'bind' => [
+                'tourId' => $tour_id
+            ],
+            'order' => 'start_time DESC'
+        ]));
+    }
 }

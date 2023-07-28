@@ -11,6 +11,7 @@ use app\models\Country;
 use app\models\DismissalMode;
 use app\models\Extras;
 use app\models\ExtrasType;
+use app\models\GameType;
 use app\models\MatchPlayerMap;
 use app\models\Player;
 use app\models\ResultType;
@@ -44,6 +45,7 @@ use app\services\DismissalModeService;
 use app\services\ExtrasService;
 use app\services\ExtrasTypeService;
 use app\services\FielderDismissalService;
+use app\services\GameTypeService;
 use app\services\ManOfTheMatchService;
 use app\services\MatchPlayerMapService;
 use app\services\MatchService;
@@ -80,6 +82,7 @@ class MatchController extends BaseController
     protected ManOfTheMatchService $man_of_the_match_service;
     protected CaptainService $captain_service;
     protected WicketKeeperService $wicket_keeper_service;
+    protected GameTypeService $game_type_service;
 
     public function onConstruct()
     {
@@ -103,6 +106,7 @@ class MatchController extends BaseController
         $this->man_of_the_match_service = new ManOfTheMatchService();
         $this->captain_service = new CaptainService();
         $this->wicket_keeper_service = new WicketKeeperService();
+        $this->game_type_service = new GameTypeService();
     }
 
     /**
@@ -120,6 +124,9 @@ class MatchController extends BaseController
         {
             throw new NotFoundException('Series');
         }
+
+        /** @var GameType $game_type */
+        $game_type = $this->game_type_service->getById($series->game_type_id);
 
         $country_ids = [
             $series->home_country_id
@@ -337,6 +344,7 @@ class MatchController extends BaseController
         $match_response = new MatchResponse(
             $match,
             $series,
+            $game_type,
             TeamResponse::withTeamAndCountryAndType($team1, CountryResponse::from_country($country_map[$team1->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team1->type_id])),
             TeamResponse::withTeamAndCountryAndType($team2, CountryResponse::from_country($country_map[$team2->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team2->type_id])),
             ResultTypeResponse::from_result_type($result_type),

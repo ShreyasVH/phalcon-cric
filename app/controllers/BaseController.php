@@ -10,10 +10,9 @@ class BaseController extends Controller
 {
     public function status($data, $code, $description)
     {
-        $responseEntity = new ResponseEntity();
+        $responseEntity = $this->response;
         $responseEntity->setStatusCode($code, $description);
         $responseEntity->setJsonContent(Response::withData($data));
-
         return $responseEntity;
     }
 

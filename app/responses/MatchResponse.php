@@ -5,6 +5,7 @@ namespace app\responses;
 
 
 use app\models\Game;
+use app\models\GameType;
 use app\models\Series;
 
 class MatchResponse
@@ -29,10 +30,10 @@ class MatchResponse
     public array $captains;
     public array $wicketKeepers;
 
-    public function __construct(Game $match, Series $series, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, array $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers)
+    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, array $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers)
     {
         $this->id = $match->id;
-        $this->series = new SeriesMiniResponse($series);
+        $this->series = new SeriesMiniResponse($series, $game_type);
         $this->team1 = $team1;
         $this->team2 = $team2;
         $team_map = [
