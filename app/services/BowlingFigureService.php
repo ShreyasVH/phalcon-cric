@@ -24,4 +24,13 @@ class BowlingFigureService
     {
         return $this->_bowling_figure_repository->get_bowling_stats($player_id);
     }
+
+    /**
+     * @param int[] $match_player_ids
+     * @return BowlingFigure[]
+     */
+    public function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return BowlingFigure::get_by_match_player_ids($match_player_ids);
+    }
 }

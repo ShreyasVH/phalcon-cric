@@ -12,4 +12,13 @@ class ExtrasService
     {
         return Extras::add($match_id, $extras_requests);
     }
+
+    /**
+     * @param int $match_id
+     * @return Extras[]
+     */
+    public function get_by_match_id(int $match_id): array
+    {
+        return Extras::get_by_match_id($match_id);
+    }
 }

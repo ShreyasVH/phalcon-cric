@@ -41,4 +41,16 @@ class FielderDismissal extends BaseModel
 
         return $fielder_dismissals;
     }
+
+    /**
+     * @param int[] $match_player_ids
+     * @return FielderDismissal[]
+     */
+    public static function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'match_player_id in ({matchPlayerIds:array})',
+            'bind' => ['matchPlayerIds' => $match_player_ids]
+        ]));
+    }
 }

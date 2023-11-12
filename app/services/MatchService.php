@@ -25,4 +25,11 @@ class MatchService
         return $match;
     }
 
+    /**
+     * @param int $id
+     */
+    public function get_by_id(int $id)
+    {
+        return Game::get_by_id($id);
+    }
 }

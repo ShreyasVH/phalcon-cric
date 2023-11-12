@@ -35,4 +35,16 @@ class ManOfTheMatch extends BaseModel
 
         return $man_of_the_match_list;
     }
+
+    /**
+     * @param int[] $match_player_ids
+     * @return ManOfTheMatch[]
+     */
+    public static function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
+            'bind' => ['matchPlayerIds' => $match_player_ids]
+        ]));
+    }
 }

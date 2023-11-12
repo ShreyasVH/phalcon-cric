@@ -58,4 +58,16 @@ class BattingScore extends BaseModel
         }
         return $batting_scores;
     }
+
+    /**
+     * @param int[] $match_player_ids
+     * @return BattingScore[]
+     */
+    public static function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
+            'bind' => ['matchPlayerIds' => $match_player_ids]
+        ]));
+    }
 }

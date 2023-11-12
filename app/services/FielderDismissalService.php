@@ -25,4 +25,13 @@ class FielderDismissalService
     {
         return $this->_fielder_dismissal_repository->get_fielding_stats($player_id);
     }
+
+    /**
+     * @param int[] $match_player_ids
+     * @return FielderDismissal[]
+     */
+    public function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return FielderDismissal::get_by_match_player_ids($match_player_ids);
+    }
 }

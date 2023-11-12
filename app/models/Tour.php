@@ -60,7 +60,7 @@ class Tour extends BaseModel
                     'startTime' => $startTime,
                     'endTime' => $endTime
                 ],
-                'order' => 'start_time ASC',
+                'order' => 'start_time DESC',
             ],
             'limit' => $limit,
             'page' => $page,

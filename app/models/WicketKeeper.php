@@ -35,4 +35,16 @@ class WicketKeeper extends BaseModel
 
         return $wicket_keeper_list;
     }
+
+    /**
+     * @param int[] $match_player_ids
+     * @return WicketKeeper[]
+     */
+    public static function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
+            'bind' => ['matchPlayerIds' => $match_player_ids]
+        ]));
+    }
 }
