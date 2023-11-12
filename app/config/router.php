@@ -67,6 +67,7 @@ $matches = new Collection();
 $matches->setHandler('app\controllers\MatchController', true);
 
 $matches->post('/cric/v1/matches', 'create');
+$matches->get('/cric/v1/matches/{id:[0-9]+}', 'get_by_id');
 
 $application->mount($matches);
 

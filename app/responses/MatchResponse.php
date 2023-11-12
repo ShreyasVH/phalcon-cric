@@ -30,7 +30,7 @@ class MatchResponse
     public array $captains;
     public array $wicketKeepers;
 
-    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, array $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers)
+    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers)
     {
         $this->id = $match->id;
         $this->series = new SeriesMiniResponse($series, $game_type);
@@ -59,9 +59,14 @@ class MatchResponse
         $this->startTime = $match->start_time;
         $this->players = $players;
 
-        $player_map = array_combine(array_map(function (PlayerMiniResponse $player) {
-            return $player->id;
-        }, $players), $players);
+        $player_map = [];
+        foreach($players as $team_id => $player_list)
+        {
+            foreach($player_list as $player)
+            {
+                $player_map[$player->id] = $player;
+            }
+        }
 
         $this->battingScores = $batting_scores;
         $this->bowlingFigures = $bowling_figures;

@@ -31,4 +31,12 @@ class BattingScoreService
         return $this->_batting_score_repository->get_batting_stats($player_id);
     }
 
+    /**
+     * @param int[] $match_player_ids
+     * @return BattingScore[]
+     */
+    public function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return BattingScore::get_by_match_player_ids($match_player_ids);
+    }
 }

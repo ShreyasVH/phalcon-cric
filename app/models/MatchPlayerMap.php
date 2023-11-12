@@ -39,4 +39,16 @@ class MatchPlayerMap extends BaseModel
 
         return $match_player_maps;
     }
+
+    /**
+     * @param int $match_id
+     * @return MatchPlayerMap[]
+     */
+    public static function get_by_match_id(int $match_id): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'match_id = :matchId:',
+            'bind' => ['matchId' => $match_id]
+        ]));
+    }
 }

@@ -7,11 +7,15 @@ namespace app\controllers;
 use app\exceptions\NotFoundException;
 use app\models\BattingScore;
 use app\models\BowlingFigure;
+use app\models\Captain;
 use app\models\Country;
 use app\models\DismissalMode;
 use app\models\Extras;
 use app\models\ExtrasType;
+use app\models\FielderDismissal;
+use app\models\Game;
 use app\models\GameType;
+use app\models\ManOfTheMatch;
 use app\models\MatchPlayerMap;
 use app\models\Player;
 use app\models\ResultType;
@@ -19,6 +23,7 @@ use app\models\Series;
 use app\models\Stadium;
 use app\models\Team;
 use app\models\TeamType;
+use app\models\WicketKeeper;
 use app\models\WinMarginType;
 use app\requests\matches\BattingScoreRequest;
 use app\requests\matches\BowlingFigureRequest;
@@ -337,9 +342,18 @@ class MatchController extends BaseController
             throw $ex;
         }
 
-        $player_responses = array_map(function (Player $player) use ($country_map) {
-            return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
-        }, $all_players);
+        $team_player_map = [];
+        foreach($all_players as $player)
+        {
+            $player_mini_response = PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
+            $team_id = $player_team_map[$player->id];
+            if(!array_key_exists($team_id, $team_player_map))
+            {
+                $team_player_map[$team_id] = [];
+            }
+            $team_player_map[$team_id][] = $player_mini_response;
+        }
+
 
         $match_response = new MatchResponse(
             $match,
@@ -350,7 +364,7 @@ class MatchController extends BaseController
             ResultTypeResponse::from_result_type($result_type),
             $win_margin_type_response,
             StadiumResponse::withStadiumAndCountry($stadium, CountryResponse::from_country($country_map[$stadium->country_id])),
-            $player_responses,
+            $team_player_map,
             $batting_score_responses,
             $bowling_figure_responses,
             $extras_responses,
@@ -360,5 +374,243 @@ class MatchController extends BaseController
         );
 
         return $this->created($match_response);
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function get_by_id(int $id)
+    {
+        /** @var Game $match */
+        $match = $this->match_service->get_by_id($id);
+        if(null == $match)
+        {
+            throw new NotFoundException('Match');
+        }
+
+        /** @var Series $series */
+        $series = $this->series_service->get_by_id($match->series_id);
+        if(null == $series)
+        {
+            throw new NotFoundException('Series');
+        }
+
+        /** @var GameType $game_type */
+        $game_type = $this->game_type_service->getById($series->game_type_id);
+
+        $country_ids = [];
+
+        $team_ids = [
+            $match->team1_id,
+            $match->team2_id
+        ];
+        $teams = $this->team_service->get_by_ids($team_ids);
+        $team_map = [];
+        /** @var Team $team */
+        foreach($teams as $team)
+        {
+            $team_map[$team->id] = $team;
+            $country_ids[] = $team->country_id;
+        }
+
+        $team1 = $team_map[$match->team1_id];
+        if(null == $team1)
+        {
+            throw new NotFoundException("Team 1");
+        }
+
+        $team2 = $team_map[$match->team2_id];
+        if(null == $team2)
+        {
+            throw new NotFoundException("Team 2");
+        }
+
+        /** @var ResultType $result_type */
+        $result_type = $this->result_type_service->getById($match->result_type_id);
+        if(null == $result_type)
+        {
+            throw new NotFoundException('Result type');
+        }
+
+        $win_margin_type_response = null;
+        if(null != $match->win_margin_type_id)
+        {
+            /** @var WinMarginType $win_margin_type */
+            $win_margin_type = $this->win_margin_type_service->getById($match->win_margin_type_id);
+            if(null == $win_margin_type)
+            {
+                throw new NotFoundException('Win margin type');
+            }
+            $win_margin_type_response = WinMarginTypeResponse::from_win_margin_type($win_margin_type);
+        }
+
+        /** @var Stadium $stadium */
+        $stadium = $this->stadium_service->get_by_id($match->stadium_id);
+        if(null == $stadium)
+        {
+            throw new NotFoundException('Stadium');
+        }
+
+        $match_player_maps = $this->match_player_map_service->get_by_match_id($id);
+        $player_ids = [];
+        $match_player_to_player_map = [];
+        $match_player_ids = [];
+        $player_to_team_map = [];
+        foreach($match_player_maps as $match_player_map)
+        {
+            $player_ids[] = $match_player_map->player_id;
+            $match_player_to_player_map[$match_player_map->id] = $match_player_map->player_id;
+            $match_player_ids[] = $match_player_map->id;
+            $player_to_team_map[$match_player_map->player_id] = $match_player_map->team_id;
+        }
+
+        /** @var Player[] $players */
+        $players = $this->player_service->get_by_ids($player_ids);
+        $player_country_ids = array_map(function (Player $player) {
+            return $player->country_id;
+        }, $players);
+
+        $country_ids[] = $stadium->country_id;
+        $country_ids = array_merge($country_ids, $player_country_ids);
+        $team_type_ids = [
+            $team1->type_id,
+            $team2->type_id
+        ];
+        $team_types = $this->team_type_service->getByIds($team_type_ids);
+        $team_type_map = array_combine(array_map(function(TeamType $team_type) {
+            return $team_type->id;
+        }, $team_types), $team_types);
+
+        /** @var Country[] $countries */
+        $countries = $this->country_service->getByIds($country_ids);
+        $country_map = array_combine(array_map(function(Country $country) {
+            return $country->id;
+        }, $countries), $countries);
+
+        $player_map = [];
+        $team_player_map = [];
+        foreach($players as $player)
+        {
+            $player_mini_response = PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
+            $player_map[$player->id] = $player_mini_response;
+            $team_id = $player_to_team_map[$player->id];
+            if(!array_key_exists($team_id, $team_player_map))
+            {
+                $team_player_map[$team_id] = [];
+            }
+            $team_player_map[$team_id][] = $player_mini_response;
+        }
+
+        $man_of_the_match_list = $this->man_of_the_match_service->get_by_match_player_ids($match_player_ids);
+        $captains = $this->captain_service->get_by_match_player_ids($match_player_ids);
+        $wicket_keepers = $this->wicket_keeper_service->get_by_match_player_ids($match_player_ids);
+        $batting_scores = $this->batting_score_service->get_by_match_player_ids($match_player_ids);
+        $dismissal_modes = $this->dismissal_mode_service->get_all();
+        $dismissal_mode_map = array_combine(array_map(function(DismissalMode $dismissal_mode) {
+            return $dismissal_mode->id;
+        }, $dismissal_modes), $dismissal_modes);
+        $fielder_dismissals = $this->fielder_dismissal_service->get_by_match_player_ids($match_player_ids);
+        $fielder_dismissal_map = array_reduce(
+            $fielder_dismissals,
+            function ($carry, FielderDismissal $fielder_dismissal) {
+                $score_id = $fielder_dismissal->score_id;
+
+                if (!array_key_exists($score_id, $carry)) {
+                    $carry[$score_id] = [];
+                }
+
+                $carry[$score_id][] = $fielder_dismissal;
+
+                return $carry;
+            },
+            []
+        );
+
+        $batting_score_responses = [];
+        foreach($batting_scores as $batting_score)
+        {
+            $batsman_player = $player_map[$match_player_to_player_map[$batting_score->match_player_id]];
+
+            /** @var DismissalModeResponse $dismissal_mode_response */
+            $dismissal_mode_response = null;
+            if(null != $batting_score->dismissal_mode_id)
+            {
+                $dismissal_mode_response = new DismissalModeResponse($dismissal_mode_map[$batting_score->dismissal_mode_id]);
+            }
+
+            $bowler_player = null;
+            if(null != $batting_score->bowler_id)
+            {
+                $bowler_player = $player_map[$match_player_to_player_map[$batting_score->bowler_id]];
+            }
+
+            $fielders = [];
+            if(array_key_exists($batting_score->id, $fielder_dismissal_map))
+            {
+                $fielder_dismissal_list = $fielder_dismissal_map[$batting_score->id];
+                $fielders = array_map(function (FielderDismissal $fielder_dismissal) use ($player_map, $match_player_to_player_map) {
+                    return $player_map[$match_player_to_player_map[$fielder_dismissal->match_player_id]];
+                }, $fielder_dismissal_list);
+            }
+
+            $batting_score_responses[] = new BattingScoreResponse(
+                $batting_score,
+                $batsman_player,
+                $dismissal_mode_response,
+                $bowler_player,
+                $fielders
+            );
+        }
+
+        $bowling_figures = $this->bowling_figure_service->get_by_match_player_ids($match_player_ids);
+        $bowling_figure_responses = array_map(function (BowlingFigure $bowling_figure) use ($player_map, $match_player_to_player_map) {
+            $bowler_player = $player_map[$match_player_to_player_map[$bowling_figure->match_player_id]];
+            return new BowlingFigureResponse($bowling_figure, $bowler_player);
+        }, $bowling_figures);
+
+        $extras_types = $this->extras_type_service->get_all();
+        $extras_type_map = array_combine(array_map(function (ExtrasType $extras_type) {
+            return $extras_type->id;
+        }, $extras_types), $extras_types);
+        $extras_list = $this->extras_service->get_by_match_id($id);
+        $extras_responses = array_map(function (Extras $extras) use ($extras_type_map, $team_map, $country_map, $team_type_map) {
+            $extras_type_response = new ExtrasTypeResponse($extras_type_map[$extras->type_id]);
+            /** @var Team $batting_team */
+            $batting_team = $team_map[$extras->batting_team_id];
+            /** @var Team $bowling_team */
+            $bowling_team = $team_map[$extras->bowling_team_id];
+            return new ExtrasResponse(
+                $extras,
+                $extras_type_response,
+                TeamResponse::withTeamAndCountryAndType($batting_team, CountryResponse::from_country($country_map[$batting_team->country_id]), TeamTypeResponse::from_team_type($team_type_map[$batting_team->type_id])),
+                TeamResponse::withTeamAndCountryAndType($bowling_team, CountryResponse::from_country($country_map[$bowling_team->country_id]), TeamTypeResponse::from_team_type($team_type_map[$bowling_team->type_id]))
+            );
+        }, $extras_list);
+
+        $match_response = new MatchResponse(
+            $match,
+            $series,
+            $game_type,
+            TeamResponse::withTeamAndCountryAndType($team1, CountryResponse::from_country($country_map[$team1->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team1->type_id])),
+            TeamResponse::withTeamAndCountryAndType($team2, CountryResponse::from_country($country_map[$team2->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team2->type_id])),
+            ResultTypeResponse::from_result_type($result_type),
+            $win_margin_type_response,
+            StadiumResponse::withStadiumAndCountry($stadium, CountryResponse::from_country($country_map[$stadium->country_id])),
+            $team_player_map,
+            $batting_score_responses,
+            $bowling_figure_responses,
+            $extras_responses,
+            array_map(function(ManOfTheMatch $man_of_the_match) use ($player_map, $match_player_to_player_map) {
+                return $match_player_to_player_map[$man_of_the_match->match_player_id];
+            }, $man_of_the_match_list),
+            array_map(function (Captain $captain) use ($player_map, $match_player_to_player_map) {
+                return $match_player_to_player_map[$captain->match_player_id];
+            }, $captains),
+            array_map(function (WicketKeeper $wicket_keeper) use ($player_map, $match_player_to_player_map) {
+                return $match_player_to_player_map[$wicket_keeper->match_player_id];
+            }, $wicket_keepers)
+        );
+
+        return $this->ok($match_response);
     }
 }
