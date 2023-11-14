@@ -32,4 +32,13 @@ class MatchService
     {
         return Game::get_by_id($id);
     }
+
+    /**
+     * @param int $series_id
+     * @return Game[]
+     */
+    public function get_by_series_id(int $series_id): array
+    {
+        return Game::get_by_series_id($series_id);
+    }
 }

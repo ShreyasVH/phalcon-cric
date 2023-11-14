@@ -6,20 +6,27 @@ use app\exceptions\BadRequestException;
 use app\exceptions\ConflictException;
 use app\exceptions\NotFoundException;
 use app\models\Country;
+use app\models\Game;
 use app\models\ManOfTheSeries;
 use app\models\Player;
+use app\models\ResultType;
 use app\models\Series;
 use app\models\SeriesTeamsMap;
+use app\models\Stadium;
 use app\models\Team;
 use app\models\TeamType;
 use app\models\SeriesType;
 use app\models\GameType;
 use app\models\Tour;
+use app\models\WinMarginType;
 use app\requests\series\CreateRequest;
 use app\requests\series\UpdateRequest;
 use app\responses\CountryResponse;
+use app\responses\MatchMiniResponse;
 use app\responses\PaginatedResponse;
 use app\responses\PlayerMiniResponse;
+use app\responses\SeriesDetailedResponse;
+use app\responses\StadiumResponse;
 use app\responses\TeamResponse;
 use app\responses\TeamTypeResponse;
 use app\responses\GameTypeResponse;
@@ -29,13 +36,17 @@ use app\responses\TourMiniResponse;
 use app\services\CountryService;
 use app\services\GameTypeService;
 use app\services\ManOfTheSeriesService;
+use app\services\MatchService;
 use app\services\PlayerService;
+use app\services\ResultTypeService;
 use app\services\SeriesService;
 use app\services\SeriesTeamsMapService;
 use app\services\SeriesTypeService;
+use app\services\StadiumService;
 use app\services\TeamService;
 use app\services\TeamTypeService;
 use app\services\TourService;
+use app\services\WinMarginTypeService;
 use Exception;
 
 class SeriesController extends BaseController
@@ -50,6 +61,10 @@ class SeriesController extends BaseController
     protected SeriesTeamsMapService $series_teams_map_service;
     protected ManOfTheSeriesService $man_of_the_series_service;
     protected PlayerService $player_service;
+    protected MatchService $match_service;
+    protected StadiumService $stadium_service;
+    protected ResultTypeService $result_type_service;
+    protected WinMarginTypeService $win_margin_type_service;
 
     public function onConstruct()
     {
@@ -63,6 +78,10 @@ class SeriesController extends BaseController
         $this->series_teams_map_service = new SeriesTeamsMapService();
         $this->man_of_the_series_service = new ManOfTheSeriesService();
         $this->player_service = new PlayerService();
+        $this->match_service = new MatchService();
+        $this->stadium_service = new StadiumService();
+        $this->result_type_service = new ResultTypeService();
+        $this->win_margin_type_service = new WinMarginTypeService();
     }
 
     /**
@@ -443,5 +462,111 @@ class SeriesController extends BaseController
         }, $players);
 
         return $this->ok(SeriesResponse::withAllData($existing_series, CountryResponse::from_country($country), TourMiniResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, $player_responses));
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function get(int $id)
+    {
+        /** @var Series $series */
+        $series = $this->series_service->get_by_id($id);
+        if(null == $series)
+        {
+            throw new NotFoundException('Series');
+        }
+
+        /** @var SeriesType $series_type */
+        $series_type = $this->series_type_service->getById($series->type_id);
+        /** @var GameType $game_type */
+        $game_type = $this->game_type_service->getById($series->game_type_id);
+
+        $series_teams_maps = $this->series_teams_map_service->get_by_series_ids([$id]);
+        $team_ids = array_map(function (SeriesTeamsMap $series_teams_map) {
+            return $series_teams_map->team_id;
+        }, $series_teams_maps);
+        $teams = $this->team_service->get_by_ids($team_ids);
+        $team_type_ids = [];
+        $country_ids = [];
+
+        foreach($teams as $team)
+        {
+            $team_type_ids[] = $team->type_id;
+            $country_ids[] = $team->country_id;
+        }
+
+        $team_types = $this->team_type_service->getByIds($team_type_ids);
+        $team_type_map = array_combine(array_map(function($team_type) {
+            return $team_type->id;
+        }, $team_types), $team_types);
+
+        $matches = $this->match_service->get_by_series_id($id);
+
+        $stadium_ids = [];
+        $result_type_ids = [];
+        $win_margin_type_ids = [];
+
+        foreach($matches as $match)
+        {
+            $stadium_ids[] = $match->stadium_id;
+            $result_type_ids[] = $match->result_type_id;
+            if(null != $match->win_margin_type_id)
+            {
+                $win_margin_type_ids[] = $match->win_margin_type_id;
+            }
+        }
+
+        $stadiums = $this->stadium_service->get_by_ids($stadium_ids);
+        $stadium_map = [];
+        foreach($stadiums as $stadium)
+        {
+            $stadium_map[$stadium->id] = $stadium;
+            $country_ids[] = $stadium->country_id;
+        }
+
+        $countries = $this->country_service->getByIds($country_ids);
+        $country_map = array_combine(array_map(function (Country $country) {
+            return $country->id;
+        }, $countries), $countries);
+
+        $team_responses = array_map(function (Team $team) use ($country_map, $team_type_map) {
+            return TeamResponse::withTeamAndCountryAndType($team, CountryResponse::from_country($country_map[$team->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team->type_id]));
+        }, $teams);
+        $team_response_map = array_combine(array_map(function (TeamResponse $team_response) {
+            return $team_response->id;
+        }, $team_responses), $team_responses);
+
+        $result_types = $this->result_type_service->get_by_ids($result_type_ids);
+        $result_type_map = array_combine(array_map(function (ResultType $result_type) {
+            return $result_type->id;
+        }, $result_types), $result_types);
+        $win_margin_types = $this->win_margin_type_service->get_by_ids($win_margin_type_ids);
+        $win_margin_type_map = array_combine(array_map(function (WinMarginType $win_margin_type) {
+            return $win_margin_type->id;
+        }, $win_margin_types), $win_margin_types);
+
+        $match_mini_responses = array_map(function (Game $match) use ($stadium_map, $team_response_map, $result_type_map, $win_margin_type_map, $country_map) {
+            /** @var Stadium $stadium */
+            $stadium = $stadium_map[$match->stadium_id];
+            $win_margin_type = ((null != $match->win_margin_type_id) ? $win_margin_type_map[$match->win_margin_type_id] : null);
+            return new MatchMiniResponse(
+                $match,
+                $team_response_map[$match->team1_id],
+                $team_response_map[$match->team2_id],
+                $result_type_map[$match->result_type_id],
+                $win_margin_type,
+                StadiumResponse::withStadiumAndCountry($stadium, CountryResponse::from_country($country_map[$stadium->country_id]))
+            );
+        }, $matches);
+
+        $series_response = new SeriesDetailedResponse(
+            $series,
+            $series_type,
+            $game_type,
+            $team_responses,
+            $match_mini_responses
+        );
+
+        return $this->ok($series_response);
     }
 }

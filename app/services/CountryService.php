@@ -49,7 +49,11 @@ class CountryService
         return $this->country_repository->getById($id);
     }
 
-    public function getByIds(array $ids)
+    /**
+     * @param int[] $ids
+     * @return Country[]
+     */
+    public function getByIds(array $ids): array
     {
         return $this->country_repository->getByIds($ids);
     }
