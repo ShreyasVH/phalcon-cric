@@ -43,4 +43,13 @@ class StadiumService
     {
         return Stadium::getById($stadium_id);
     }
+
+    /**
+     * @param int[] $ids
+     * @return Stadium[]
+     */
+    public function get_by_ids(array $ids): array
+    {
+        return Stadium::get_by_ids($ids);
+    }
 }

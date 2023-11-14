@@ -60,6 +60,7 @@ $series->setHandler('app\controllers\SeriesController', true);
 $series->post('/cric/v1/series', 'create');
 $series->get('/cric/v1/series', 'get_all');
 $series->put('/cric/v1/series/{id:[0-9]+}', 'update');
+$series->get('/cric/v1/series/{id:[0-9]+}', 'get');
 
 $application->mount($series);
 

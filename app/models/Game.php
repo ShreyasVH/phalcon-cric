@@ -57,4 +57,16 @@ class Game extends BaseModel
 
         return $match;
     }
+
+    /**
+     * @param int $series_id
+     * @return Game[]
+     */
+    public static function get_by_series_id(int $series_id): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'series_id = :seriesId:',
+            'bind' => ['seriesId' => $series_id]
+        ]));
+    }
 }
