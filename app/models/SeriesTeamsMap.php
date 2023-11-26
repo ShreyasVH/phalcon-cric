@@ -34,7 +34,11 @@ class SeriesTeamsMap extends BaseModel
         }
     }
 
-    public static function get_by_series_ids(array $series_ids)
+    /**
+     * @param int[] $series_ids
+     * @return SeriesTeamsMap[]
+     */
+    public static function get_by_series_ids(array $series_ids): array
     {
         $series_teams_maps = [];
         if(!empty($series_ids))
@@ -48,7 +52,7 @@ class SeriesTeamsMap extends BaseModel
         return $series_teams_maps;
     }
 
-    public static function remove(int $series_id, array $team_ids)
+    public static function remove_players(int $series_id, array $team_ids)
     {
         if(!empty($team_ids))
         {
@@ -64,6 +68,17 @@ class SeriesTeamsMap extends BaseModel
             {
                 $series_teams_map->delete();
             }
+        }
+    }
+
+    /**
+     * @param int $series_id
+     */
+    public static function remove(int $series_id)
+    {
+        foreach(self::get_by_series_ids([$series_id]) as $series_teams_map)
+        {
+            $series_teams_map->delete();
         }
     }
 }

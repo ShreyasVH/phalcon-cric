@@ -31,7 +31,11 @@ class ManOfTheSeries extends BaseModel
         }
     }
 
-    public static function get_by_series_ids(array $series_ids)
+    /**
+     * @param int[] $series_ids
+     * @return ManOfTheSeries[]
+     */
+    public static function get_by_series_ids(array $series_ids): array
     {
         $man_of_the_series_list = [];
 
@@ -45,7 +49,7 @@ class ManOfTheSeries extends BaseModel
         return $man_of_the_series_list;
     }
 
-    public static function remove(int $series_id, array $player_ids)
+    public static function remove_players(int $series_id, array $player_ids)
     {
         if(!empty($player_ids))
         {
@@ -61,6 +65,17 @@ class ManOfTheSeries extends BaseModel
             {
                 $man_of_the_series->delete();
             }
+        }
+    }
+
+    /**
+     * @param int $series_id
+     */
+    public static function remove(int $series_id)
+    {
+        foreach(self::get_by_series_ids([$series_id]) as $mots)
+        {
+            $mots->delete();
         }
     }
 }

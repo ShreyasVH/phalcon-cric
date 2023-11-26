@@ -19,7 +19,12 @@ class Response
 
     public static function withMessage(string $message)
     {
-        return new Response(null, false, $message);
+        return self::withMessageAndSuccess($message, false);
+    }
+
+    public static function withMessageAndSuccess(string $message, bool $success)
+    {
+        return new Response(null, $success, $message);
     }
 
     public static function withData($data)

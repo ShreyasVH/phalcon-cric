@@ -436,9 +436,9 @@ class SeriesController extends BaseController
 
             $this->series_service->update($existing_series, $update_request);
             $this->series_teams_map_service->add($id, $teams_to_add);
-            $this->series_teams_map_service->remove($id, $teams_to_delete);
+            $this->series_teams_map_service->remove_players($id, $teams_to_delete);
             $this->man_of_the_series_service->add($id, $man_of_the_series_to_add);
-            $this->man_of_the_series_service->remove($id, $man_of_the_series_to_delete);
+            $this->man_of_the_series_service->remove_players($id, $man_of_the_series_to_delete);
 
             $this->db->commit();
         }
@@ -568,5 +568,44 @@ class SeriesController extends BaseController
         );
 
         return $this->ok($series_response);
+    }
+
+    /**
+     * @throws NotFoundException
+     * @throws ConflictException
+     * @throws Exception
+     */
+    public function remove(int $id)
+    {
+        /** @var Series $series */
+        $series = $this->series_service->get_by_id($id);
+        if(null == $series)
+        {
+            throw new NotFoundException('Series');
+        }
+
+        $matches = $this->match_service->get_by_series_id($id);
+        if(!empty($matches))
+        {
+            throw new ConflictException('Matches still exist');
+        }
+
+        try
+        {
+            $this->db->begin();
+
+            $this->man_of_the_series_service->remove($id);
+            $this->series_teams_map_service->remove($id);
+            $this->series_service->remove($id);
+
+            $this->db->commit();
+        }
+        catch(Exception $ex)
+        {
+            $this->db->rollback();
+            throw $ex;
+        }
+
+        return $this->ok_with_message('Deleted successfully');
     }
 }

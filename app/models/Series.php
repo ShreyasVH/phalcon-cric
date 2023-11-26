@@ -74,4 +74,12 @@ class Series extends BaseModel
             'order' => 'start_time DESC'
         ]));
     }
+
+    /**
+     * @param int $id
+     */
+    public static function remove(int $id)
+    {
+        (self::get_by_id($id))->delete();
+    }
 }
