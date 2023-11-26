@@ -69,4 +69,12 @@ class Game extends BaseModel
             'bind' => ['seriesId' => $series_id]
         ]));
     }
+
+    /**
+     * @param int $id
+     */
+    public static function remove(int $id)
+    {
+        (self::get_by_id($id))->delete();
+    }
 }

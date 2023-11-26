@@ -21,4 +21,12 @@ class ExtrasService
     {
         return Extras::get_by_match_id($match_id);
     }
+
+    /**
+     * @param int $match_id
+     */
+    public function remove(int $match_id)
+    {
+        Extras::remove($match_id);
+    }
 }

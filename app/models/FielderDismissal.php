@@ -48,9 +48,27 @@ class FielderDismissal extends BaseModel
      */
     public static function get_by_match_player_ids(array $match_player_ids): array
     {
-        return self::toList(self::find([
-            'conditions' => 'match_player_id in ({matchPlayerIds:array})',
-            'bind' => ['matchPlayerIds' => $match_player_ids]
-        ]));
+        $fielder_dismissals = [];
+
+        if(!empty($match_player_ids))
+        {
+            $fielder_dismissals = self::toList(self::find([
+                'conditions' => 'match_player_id in ({matchPlayerIds:array})',
+                'bind' => ['matchPlayerIds' => $match_player_ids]
+            ]));
+        }
+
+        return $fielder_dismissals;
+    }
+
+    /**
+     * @param int[] $match_player_ids
+     */
+    public static function remove(array $match_player_ids)
+    {
+        foreach(self::get_by_match_player_ids($match_player_ids) as $fielder_dismissal)
+        {
+            $fielder_dismissal->delete();
+        }
     }
 }

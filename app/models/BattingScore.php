@@ -65,9 +65,27 @@ class BattingScore extends BaseModel
      */
     public static function get_by_match_player_ids(array $match_player_ids): array
     {
-        return self::toList(self::find([
-            'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
-            'bind' => ['matchPlayerIds' => $match_player_ids]
-        ]));
+        $batting_scores = [];
+
+        if(!empty($match_player_ids))
+        {
+            $batting_scores = self::toList(self::find([
+                'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
+                'bind' => ['matchPlayerIds' => $match_player_ids]
+            ]));
+        }
+
+        return $batting_scores;
+    }
+
+    /**
+     * @param int[] $match_player_ids
+     */
+    public static function remove(array $match_player_ids)
+    {
+        foreach(self::get_by_match_player_ids($match_player_ids) as $batting_score)
+        {
+            $batting_score->delete();
+        }
     }
 }

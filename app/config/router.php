@@ -69,6 +69,7 @@ $matches->setHandler('app\controllers\MatchController', true);
 
 $matches->post('/cric/v1/matches', 'create');
 $matches->get('/cric/v1/matches/{id:[0-9]+}', 'get_by_id');
+$matches->delete('/cric/v1/matches/{id:[0-9]+}', 'remove');
 
 $application->mount($matches);
 
@@ -91,7 +92,7 @@ $application->error(function(Throwable $ex) use($application) {
         $http_status_code = $my_exception->http_status_code;
     }
 
-    $response = Response::withError($description);
+    $response = Response::withMessage($description);
 
     $application->response->setContentType('application/json', 'UTF-8');
     $output_content = json_encode($response, JSON_UNESCAPED_SLASHES);

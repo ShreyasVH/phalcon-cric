@@ -17,7 +17,7 @@ class Response
         $this->message = $message;
     }
 
-    public static function withError(string $message)
+    public static function withMessage(string $message)
     {
         return new Response(null, false, $message);
     }
