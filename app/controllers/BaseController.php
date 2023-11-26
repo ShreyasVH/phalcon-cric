@@ -16,6 +16,14 @@ class BaseController extends Controller
         return $responseEntity;
     }
 
+    public function status_with_message($message, $code, $description)
+    {
+        $responseEntity = $this->response;
+        $responseEntity->setStatusCode($code, $description);
+        $responseEntity->setJsonContent(Response::withMessage($message));
+        return $responseEntity;
+    }
+
     public function created($data)
     {
         return $this->status($data, 201, 'Created');
@@ -24,5 +32,10 @@ class BaseController extends Controller
     public function ok($data)
     {
         return $this->status($data, 200, 'OK');
+    }
+
+    public function ok_with_message($message)
+    {
+        return $this->status_with_message($message, 200, 'OK');
     }
 }

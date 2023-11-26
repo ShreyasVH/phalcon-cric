@@ -21,4 +21,12 @@ class MatchPlayerMapService
     {
         return MatchPlayerMap::get_by_match_id($match_id);
     }
+
+    /**
+     * @param int $match_id
+     */
+    public function remove(int $match_id)
+    {
+        MatchPlayerMap::remove($match_id);
+    }
 }

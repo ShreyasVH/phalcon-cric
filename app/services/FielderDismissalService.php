@@ -34,4 +34,12 @@ class FielderDismissalService
     {
         return FielderDismissal::get_by_match_player_ids($match_player_ids);
     }
+
+    /**
+     * @param array $match_player_ids
+     */
+    public function remove(array $match_player_ids)
+    {
+        FielderDismissal::remove($match_player_ids);
+    }
 }

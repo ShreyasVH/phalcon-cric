@@ -613,4 +613,45 @@ class MatchController extends BaseController
 
         return $this->ok($match_response);
     }
+
+    /**
+     * @throws NotFoundException
+     * @throws Exception
+     */
+    public function remove(int $id)
+    {
+        /** @var Game $match */
+        $match = $this->match_service->get_by_id($id);
+        if (null == $match) {
+            throw new NotFoundException('Match');
+        }
+
+        try
+        {
+            $this->db->begin();
+
+            $match_player_maps = $this->match_player_map_service->get_by_match_id($id);
+            $match_player_ids = array_map(function ($mpm) {
+                return $mpm->id;
+            }, $match_player_maps);
+            $this->extras_service->remove($id);
+            $this->captain_service->remove($match_player_ids);
+            $this->wicket_keeper_service->remove($match_player_ids);
+            $this->man_of_the_match_service->remove($match_player_ids);
+            $this->fielder_dismissal_service->remove($match_player_ids);
+            $this->batting_score_service->remove($match_player_ids);
+            $this->bowling_figure_service->remove($match_player_ids);
+            $this->match_player_map_service->remove($id);
+            $this->match_service->remove($id);
+
+            $this->db->commit();
+        }
+        catch(Exception $ex)
+        {
+            $this->db->rollback();
+            throw $ex;
+        }
+
+        return $this->ok_with_message('Deleted successfully');
+    }
 }

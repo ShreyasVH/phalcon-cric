@@ -41,4 +41,12 @@ class MatchService
     {
         return Game::get_by_series_id($series_id);
     }
+
+    /**
+     * @param int $match_id
+     */
+    public function remove(int $match_id)
+    {
+        Game::remove($match_id);
+    }
 }

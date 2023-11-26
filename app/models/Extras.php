@@ -61,4 +61,15 @@ class Extras extends BaseModel
             'bind' => ['matchId' => $match_id]
         ]));
     }
+
+    /**
+     * @param int $match_id
+     */
+    public static function remove(int $match_id)
+    {
+        foreach(self::get_by_match_id($match_id) as $extras)
+        {
+            $extras->delete();
+        }
+    }
 }

@@ -42,9 +42,27 @@ class Captain extends BaseModel
      */
     public static function get_by_match_player_ids(array $match_player_ids): array
     {
-        return self::toList(self::find([
-            'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
-            'bind' => ['matchPlayerIds' => $match_player_ids]
-        ]));
+        $captains = [];
+
+        if(!empty($match_player_ids))
+        {
+            $captains = self::toList(self::find([
+                'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
+                'bind' => ['matchPlayerIds' => $match_player_ids]
+            ]));
+        }
+
+        return $captains;
+    }
+
+    /**
+     * @param int[] $match_player_ids
+     */
+    public static function remove(array $match_player_ids)
+    {
+        foreach(self::get_by_match_player_ids($match_player_ids) as $captain)
+        {
+            $captain->delete();
+        }
     }
 }
