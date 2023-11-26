@@ -26,8 +26,13 @@ class SeriesTeamsMapService
         return $this->series_teams_map_repository->get_by_series_ids($series_ids);
     }
 
-    public function remove(int $series_id, array $team_ids)
+    public function remove_players(int $series_id, array $team_ids)
     {
-        SeriesTeamsMap::remove($series_id, $team_ids);
+        SeriesTeamsMap::remove_players($series_id, $team_ids);
+    }
+
+    public function remove(int $series_id)
+    {
+        SeriesTeamsMap::remove($series_id);
     }
 }

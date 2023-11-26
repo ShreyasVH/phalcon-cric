@@ -20,7 +20,7 @@ class BaseController extends Controller
     {
         $responseEntity = $this->response;
         $responseEntity->setStatusCode($code, $description);
-        $responseEntity->setJsonContent(Response::withMessage($message));
+        $responseEntity->setJsonContent(Response::withMessageAndSuccess($message, true));
         return $responseEntity;
     }
 

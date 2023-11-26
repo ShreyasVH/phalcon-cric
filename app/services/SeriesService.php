@@ -102,4 +102,9 @@ class SeriesService
     {
         return Series::get_by_tour_id($tour_id);
     }
+
+    public function remove(int $series_id)
+    {
+        Series::remove($series_id);
+    }
 }
