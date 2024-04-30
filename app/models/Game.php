@@ -66,7 +66,8 @@ class Game extends BaseModel
     {
         return self::toList(self::find([
             'conditions' => 'series_id = :seriesId:',
-            'bind' => ['seriesId' => $series_id]
+            'bind' => ['seriesId' => $series_id],
+            'order' => 'start_time ASC'
         ]));
     }
 
