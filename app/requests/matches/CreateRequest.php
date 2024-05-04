@@ -49,7 +49,7 @@ class CreateRequest
         }
         $this->stadiumId = $create_request['stadiumId'];
         $this->startTime = $create_request['startTime'];
-        if(array_key_exists('isOfficial', $create_request) && null != $create_request['isOfficial'])
+        if(array_key_exists('isOfficial', $create_request) && null !== $create_request['isOfficial'])
         {
             $this->isOfficial = $create_request['isOfficial'];
         }
