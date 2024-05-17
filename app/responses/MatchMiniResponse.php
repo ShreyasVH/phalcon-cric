@@ -33,8 +33,11 @@ class MatchMiniResponse
         if(null != $match->winner_id)
         {
             $this->winner = $team_map[$match->winner_id];
-            $this->winMargin = $match->win_margin;
-            $this->winMarginType = WinMarginTypeResponse::from_win_margin_type($win_margin_type);
+            if(null != $match->win_margin)
+            {
+                $this->winMargin = $match->win_margin;
+                $this->winMarginType = WinMarginTypeResponse::from_win_margin_type($win_margin_type);
+            }
         }
 
         $this->resultType = ResultTypeResponse::from_result_type($result_type);
