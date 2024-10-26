@@ -44,8 +44,11 @@ class CreateRequest
         if(array_key_exists('winnerId', $create_request))
         {
             $this->winnerId = $create_request['winnerId'];
-            $this->winMargin = $create_request['winMargin'];
-            $this->winMarginTypeId = $create_request['winMarginTypeId'];
+            if(array_key_exists('winMarginTypeId', $create_request))
+            {
+                $this->winMargin = $create_request['winMargin'];
+                $this->winMarginTypeId = $create_request['winMarginTypeId'];
+            }
         }
         $this->stadiumId = $create_request['stadiumId'];
         $this->startTime = $create_request['startTime'];
