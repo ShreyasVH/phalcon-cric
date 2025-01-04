@@ -4,6 +4,8 @@
 namespace app\models;
 
 
+use app\requests\players\MergeRequest;
+
 class MatchPlayerMap extends BaseModel
 {
     public $id;
@@ -60,6 +62,24 @@ class MatchPlayerMap extends BaseModel
         foreach(self::get_by_match_id($match_id) as $match_player_map)
         {
             $match_player_map->delete();
+        }
+    }
+
+    public static function get_by_player_id(int $player_id): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'player_id = :playerId:',
+            'bind' => ['playerId' => $player_id]
+        ]));
+    }
+
+    public static function merge(MergeRequest $mergeRequest)
+    {
+        /** @var MatchPlayerMap $match_player_map */
+        foreach(self::get_by_player_id($mergeRequest->playerIdToMerge) as $match_player_map)
+        {
+            $match_player_map->player_id = $mergeRequest->originalPlayerId;
+            $match_player_map->save();
         }
     }
 }

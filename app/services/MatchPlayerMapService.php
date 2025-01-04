@@ -5,6 +5,7 @@ namespace app\services;
 
 
 use app\models\MatchPlayerMap;
+use app\requests\players\MergeRequest;
 
 class MatchPlayerMapService
 {
@@ -28,5 +29,10 @@ class MatchPlayerMapService
     public function remove(int $match_id)
     {
         MatchPlayerMap::remove($match_id);
+    }
+
+    public function merge(MergeRequest $mergeRequest)
+    {
+        MatchPlayerMap::merge($mergeRequest);
     }
 }

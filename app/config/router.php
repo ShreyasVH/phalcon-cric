@@ -51,6 +51,7 @@ $players->setHandler('app\controllers\PlayerController', true);
 $players->post('/cric/v1/players', 'create');
 $players->get('/cric/v1/players', 'getall');
 $players->get('/cric/v1/players/{id:[0-9]+}', 'get_by_id');
+$players->post('/cric/v1/players/merge', 'merge');
 
 $application->mount($players);
 

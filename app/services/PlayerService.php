@@ -48,4 +48,9 @@ class PlayerService
     {
         return Player::get_by_id($id);
     }
+
+    public function remove(int $id)
+    {
+        Player::remove($id);
+    }
 }
