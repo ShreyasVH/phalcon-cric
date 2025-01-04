@@ -1,6 +1,8 @@
 <?php
 namespace app\models;
 
+use app\requests\players\MergeRequest;
+
 class ManOfTheSeries extends BaseModel
 {
     public $id;
@@ -68,6 +70,14 @@ class ManOfTheSeries extends BaseModel
         }
     }
 
+    public static function get_by_player_id(int $player_id): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'player_id = :playerId:',
+            'bind' => ['playerId' => $player_id]
+        ]));
+    }
+
     /**
      * @param int $series_id
      */
@@ -76,6 +86,16 @@ class ManOfTheSeries extends BaseModel
         foreach(self::get_by_series_ids([$series_id]) as $mots)
         {
             $mots->delete();
+        }
+    }
+
+    public static function merge(MergeRequest $mergeRequest)
+    {
+        /** @var ManOfTheSeries $man_of_the_series */
+        foreach(self::get_by_player_id($mergeRequest->playerIdToMerge) as $man_of_the_series)
+        {
+            $man_of_the_series->player_id = $mergeRequest->originalPlayerId;
+            $man_of_the_series->save();
         }
     }
 }

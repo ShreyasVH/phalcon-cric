@@ -59,4 +59,10 @@ class Player extends BaseModel
     {
         return self::count();
     }
+
+    public static function remove(int $player_id)
+    {
+        $player = self::get_by_id($player_id);
+        $player->delete();
+    }
 }

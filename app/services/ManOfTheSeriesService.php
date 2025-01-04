@@ -5,6 +5,7 @@ namespace app\services;
 
 
 use app\models\ManOfTheSeries;
+use app\requests\players\MergeRequest;
 
 class ManOfTheSeriesService
 {
@@ -26,5 +27,10 @@ class ManOfTheSeriesService
     public function remove(int $series_id)
     {
         ManOfTheSeries::remove($series_id);
+    }
+
+    public function merge(MergeRequest $mergeRequest)
+    {
+        ManOfTheSeries::merge($mergeRequest);
     }
 }

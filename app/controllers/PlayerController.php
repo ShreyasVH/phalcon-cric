@@ -6,6 +6,7 @@ use app\exceptions\NotFoundException;
 use app\models\Country;
 use app\models\Player;
 use app\requests\players\CreateRequest;
+use app\requests\players\MergeRequest;
 use app\responses\BattingStats;
 use app\responses\BowlingStats;
 use app\responses\CountryResponse;
@@ -17,6 +18,8 @@ use app\services\BattingScoreService;
 use app\services\BowlingFigureService;
 use app\services\CountryService;
 use app\services\FielderDismissalService;
+use app\services\ManOfTheSeriesService;
+use app\services\MatchPlayerMapService;
 use app\services\PlayerService;
 
 class PlayerController extends BaseController
@@ -26,6 +29,8 @@ class PlayerController extends BaseController
     protected BattingScoreService $_batting_score_service;
     protected BowlingFigureService $_bowling_figure_service;
     protected FielderDismissalService $_fielder_dismissal_service;
+    protected ManOfTheSeriesService $_man_of_the_series_service;
+    protected MatchPlayerMapService $_match_player_map_service;
 
     public function onConstruct()
     {
@@ -34,6 +39,8 @@ class PlayerController extends BaseController
         $this->_batting_score_service = new BattingScoreService();
         $this->_bowling_figure_service = new BowlingFigureService();
         $this->_fielder_dismissal_service = new FielderDismissalService();
+        $this->_man_of_the_series_service = new ManOfTheSeriesService();
+        $this->_match_player_map_service = new MatchPlayerMapService();
     }
 
     public function create()
@@ -171,5 +178,28 @@ class PlayerController extends BaseController
         }
 
         return $this->ok($player_response);
+    }
+
+    public function merge()
+    {
+        $merge_request = MergeRequest::fromPostRequest($this->request->getJsonRawBody(true));
+
+        $player = $this->playerService->get_by_id($merge_request->playerIdToMerge);
+        if(null == $player)
+        {
+            throw new NotFoundException('Player');
+        }
+
+        $original_player = $this->playerService->get_by_id($merge_request->originalPlayerId);
+        if(null == $original_player)
+        {
+            throw new NotFoundException('Original Player');
+        }
+
+        $this->_man_of_the_series_service->merge($merge_request);
+        $this->_match_player_map_service->merge($merge_request);
+        $this->playerService->remove($merge_request->playerIdToMerge);
+
+        return $this->ok('Success');
     }
 }
