@@ -2,3 +2,6 @@
 .idea
 vendor
 logs
+composerInstall.log
+server.log
+migrations.log
