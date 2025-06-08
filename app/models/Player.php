@@ -65,4 +65,33 @@ class Player extends BaseModel
         $player = self::get_by_id($player_id);
         $player->delete();
     }
+
+    public static function search($keyword, int $page, int $limit)
+    {
+        $paginator = new ModelPaginator([
+            'model' => Player::class,
+            'parameters' => [
+                'name like :name:',
+                'bind' => [
+                    'name' => '%' . $keyword . '%'
+                ],
+                'order' => 'name ASC',
+            ],
+            'limit' => $limit,
+            'page' => $page,
+        ]);
+
+        return self::toList($paginator->paginate()->getItems());
+    }
+
+    public static function search_count($keyword)
+    {
+        return self::count([
+            'model' => Player::class,
+            'conditions' => 'name like :name:',
+            'bind' => [
+                'name' => '%' . $keyword . '%'
+            ]
+        ]);
+    }
 }
