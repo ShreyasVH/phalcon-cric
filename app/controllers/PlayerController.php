@@ -43,6 +43,21 @@ class PlayerController extends BaseController
         $this->_match_player_map_service = new MatchPlayerMapService();
     }
 
+    private function getPlayerResponses($players)
+    {
+        $countryIds = array_map(function (Player $player) {
+            return $player->country_id;
+        }, $players);
+        $countries = $this->countryService->getByIds($countryIds);
+        $countryMap = array_combine(array_map(function (Country $country) {
+            return $country->id;
+        }, $countries), $countries);
+
+        return  array_map(function (Player $player) use ($countryMap) {
+            return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($countryMap[$player->country_id]));
+        }, $players);
+    }
+
     public function create()
     {
         $createRequest = CreateRequest::fromPostRequest($this->request->getJsonRawBody(true));
@@ -63,17 +78,7 @@ class PlayerController extends BaseController
         $page = $this->request->getQuery('page', 'int', 1);
         $limit = $this->request->getQuery('limit', 'int', 25);
         $players = $this->playerService->getAll($page, $limit);
-        $countryIds = array_map(function (Player $player) {
-            return $player->country_id;
-        }, $players);
-        $countries = $this->countryService->getByIds($countryIds);
-        $countryMap = array_combine(array_map(function (Country $country) {
-            return $country->id;
-        }, $countries), $countries);
-
-        $playerResponses = array_map(function (Player $player) use ($countryMap) {
-            return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($countryMap[$player->country_id]));
-        }, $players);
+        $playerResponses = $this->getPlayerResponses($players);
         $totalCount = 0;
         if($page == 1)
         {
@@ -209,17 +214,7 @@ class PlayerController extends BaseController
         $limit = $this->request->getQuery('limit', 'int', 25);
         $keyword = $this->request->getQuery('keyword', 'string', '');
         $players = $this->playerService->search($keyword, $page, $limit);
-        $countryIds = array_map(function (Player $player) {
-            return $player->country_id;
-        }, $players);
-        $countries = $this->countryService->getByIds($countryIds);
-        $countryMap = array_combine(array_map(function (Country $country) {
-            return $country->id;
-        }, $countries), $countries);
-
-        $playerResponses = array_map(function (Player $player) use ($countryMap) {
-            return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($countryMap[$player->country_id]));
-        }, $players);
+        $playerResponses = $this->getPlayerResponses($players);
         $totalCount = 0;
         if($page == 1)
         {
