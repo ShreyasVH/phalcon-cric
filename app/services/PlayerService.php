@@ -53,4 +53,14 @@ class PlayerService
     {
         Player::remove($id);
     }
+
+    public function search($keyword, int $page, int $limit)
+    {
+        return Player::search($keyword, $page, $limit);
+    }
+
+    public function search_count($keyword)
+    {
+        return Player::search_count($keyword);
+    }
 }
