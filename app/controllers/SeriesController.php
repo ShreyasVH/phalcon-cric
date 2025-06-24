@@ -109,6 +109,25 @@ class SeriesController extends BaseController
         }
 
         $country_ids[] = $create_request->homeCountryId;
+
+        $players = [];
+        $man_of_the_series_to_add = [];
+        if(null != $create_request->manOfTheSeriesList)
+        {
+            $players = $this->player_service->get_by_ids($create_request->manOfTheSeriesList);
+            if(count($players) != count(array_unique($create_request->manOfTheSeriesList)))
+            {
+                throw new NotFoundException('Player');
+            }
+
+            $man_of_the_series_to_add = $create_request->manOfTheSeriesList;
+        }
+
+        $player_country_ids = array_map(function(Player $player) {
+            return $player->country_id;
+        }, $players);
+        $country_ids = array_merge($country_ids, $player_country_ids);
+
         $countries = $this->country_service->getByIds($country_ids);
         $country_map = array_combine(array_map(function (Country $country) {
             return $country->id;
@@ -146,6 +165,7 @@ class SeriesController extends BaseController
             $this->db->begin();
             $series = $this->series_service->create($create_request);
             $this->series_teams_map_service->add($series->id, $create_request->teams);
+            $this->man_of_the_series_service->add($series->id, $man_of_the_series_to_add);
 
             $this->db->commit();
         }
@@ -163,7 +183,11 @@ class SeriesController extends BaseController
             return TeamResponse::withTeamAndCountryAndType($team, CountryResponse::from_country($country_map[$team->country_id]), TeamTypeResponse::from_team_type($team_type_map[$team->type_id]));
         }, $teams);
 
-        return $this->created(SeriesResponse::withAllData($series, CountryResponse::from_country($country_map[$series->home_country_id]), TourMiniResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, []));
+        $player_responses = array_map(function(Player $player) use ($country_map) {
+            return PlayerMiniResponse::withPlayerAndCountry($player, CountryResponse::from_country($country_map[$player->country_id]));
+        }, $players);
+
+        return $this->created(SeriesResponse::withAllData($series, CountryResponse::from_country($country_map[$series->home_country_id]), TourMiniResponse::from_tour($tour), SeriesTypeResponse::from_series_type($series_type), GameTypeResponse::from_game_type($game_type), $team_responses, $player_responses));
     }
 
     public function get_all()
