@@ -34,6 +34,6 @@ class CreateRequest
 
     public static function fromPostRequest(array $request)
     {
-        return new CreateRequest($request['name'], $request['city'], $request['state'], $request['countryId']);
+        return new CreateRequest($request['name'], $request['city'], ((array_key_exists('state', $request)) ? $request['state'] : null), $request['countryId']);
     }
 }
