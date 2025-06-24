@@ -14,9 +14,9 @@ class StadiumRepository
         return $stadium;
     }
 
-    public function findByNameAndCountryId(string $name, int $countryId)
+    public function findByNameAndCountryIdAndCity(string $name, int $countryId, string $city)
     {
-        return Stadium::findByNameAndCountryId($name, $countryId);
+        return Stadium::findByNameAndCountryIdAndCity($name, $countryId, $city);
     }
 
     public function getAll(int $page, int $limit)

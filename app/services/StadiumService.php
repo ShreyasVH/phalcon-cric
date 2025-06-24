@@ -21,7 +21,7 @@ class StadiumService
     {
         $create_request->validate();
 
-        $existingStadium = $this->stadiumRepository->findByNameAndCountryId($create_request->name, $create_request->countryId);
+        $existingStadium = $this->stadiumRepository->findByNameAndCountryIdAndCity($create_request->name, $create_request->countryId, $create_request->city);
         if(null != $existingStadium)
         {
             throw new ConflictException('Stadium');

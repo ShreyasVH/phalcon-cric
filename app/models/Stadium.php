@@ -30,13 +30,14 @@ class Stadium extends BaseModel
         return $stadium;
     }
 
-    public static function findByNameAndCountryId(string $name, int $countryId)
+    public static function findByNameAndCountryIdAndCity(string $name, int $countryId, string $city)
     {
         return self::findFirst([
-            'conditions' => 'name = :name: and country_id = :countryId:',
+            'conditions' => 'name = :name: and country_id = :countryId: and city = :city:',
             'bind' => [
                 'name' => $name,
-                'countryId' => $countryId
+                'countryId' => $countryId,
+                'city' => $city
             ]
         ]);
     }
