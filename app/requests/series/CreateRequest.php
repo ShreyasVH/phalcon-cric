@@ -47,6 +47,6 @@ class CreateRequest
 
     public static function fromPostRequest(array $request)
     {
-        return new CreateRequest($request['name'], $request['homeCountryId'], $request['tourId'], $request['typeId'], $request['gameTypeId'], $request['startTime'], $request['teams'], $request['manOfTheSeriesList']);
+        return new CreateRequest($request['name'], $request['homeCountryId'], $request['tourId'], $request['typeId'], $request['gameTypeId'], $request['startTime'], $request['teams'], (array_key_exists('manOfTheSeriesList', $request) ? $request['manOfTheSeriesList'] : []));
     }
 }
