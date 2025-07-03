@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\exceptions\BadRequestException;
 use app\exceptions\NotFoundException;
 use app\models\Country;
 use app\models\Player;
@@ -189,6 +190,11 @@ class PlayerController extends BaseController
     {
         $merge_request = MergeRequest::fromPostRequest($this->request->getJsonRawBody(true));
 
+        if($merge_request->originalPlayerId == $merge_request->playerIdToMerge)
+        {
+            throw new BadRequestException('Same player given');
+        }
+
         $player = $this->playerService->get_by_id($merge_request->playerIdToMerge);
         if(null == $player)
         {
@@ -201,9 +207,18 @@ class PlayerController extends BaseController
             throw new NotFoundException('Original Player');
         }
 
-        $this->_man_of_the_series_service->merge($merge_request);
-        $this->_match_player_map_service->merge($merge_request);
-        $this->playerService->remove($merge_request->playerIdToMerge);
+        try {
+            $this->db->begin();
+            $this->_man_of_the_series_service->merge($merge_request);
+            $this->_match_player_map_service->merge($merge_request);
+            $this->playerService->remove($merge_request->playerIdToMerge);
+            $this->db->commit();
+        }
+        catch(Exception $ex)
+        {
+            $this->db->rollback();
+            throw $ex;
+        }
 
         return $this->ok('Success');
     }
