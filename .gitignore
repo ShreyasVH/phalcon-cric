@@ -5,3 +5,5 @@ logs
 composerInstall.log
 server.log
 migrations.log
+php-fpm.conf
+php-fpm.pid
