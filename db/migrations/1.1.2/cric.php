@@ -102,8 +102,7 @@ class CricMigration_112 extends Migration
             'indexes' => [
                 new Index('PRIMARY', ['id'], 'PRIMARY'),
                 new Index('uk_t_match_team_innings', ['match_id', 'team_id', 'innings'], 'UNIQUE'),
-                new Index('match', ['match_id'], ''),
-                new Index('team', ['team_id'], '')
+                new Index('t_team', ['team_id'], '')
             ],
             'references' => [
                 new Reference(
