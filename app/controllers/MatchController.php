@@ -25,10 +25,11 @@ use app\models\Team;
 use app\models\TeamType;
 use app\models\WicketKeeper;
 use app\models\WinMarginType;
-use app\requests\matches\BattingScoreRequest;
+use app\models\Total;
 use app\requests\matches\BowlingFigureRequest;
 use app\requests\matches\CreateRequest;
 use app\requests\matches\PlayerRequest;
+use app\requests\matches\TotalRequestEntry;
 use app\responses\BattingScoreResponse;
 use app\responses\BowlingFigureResponse;
 use app\responses\CountryResponse;
@@ -60,6 +61,7 @@ use app\services\SeriesService;
 use app\services\StadiumService;
 use app\services\TeamService;
 use app\services\TeamTypeService;
+use app\services\TotalsService;
 use app\services\TourService;
 use app\services\WicketKeeperService;
 use app\services\WinMarginTypeService;
@@ -88,6 +90,7 @@ class MatchController extends BaseController
     protected CaptainService $captain_service;
     protected WicketKeeperService $wicket_keeper_service;
     protected GameTypeService $game_type_service;
+    protected TotalsService $totals_service;
 
     public function onConstruct()
     {
@@ -112,6 +115,7 @@ class MatchController extends BaseController
         $this->captain_service = new CaptainService();
         $this->wicket_keeper_service = new WicketKeeperService();
         $this->game_type_service = new GameTypeService();
+        $this->totals_service = new TotalsService();
     }
 
     /**
@@ -333,6 +337,10 @@ class MatchController extends BaseController
             $this->man_of_the_match_service->add($create_request->manOfTheMatchList, $player_to_match_player_map);
             $this->captain_service->add($create_request->captains, $player_to_match_player_map);
             $this->wicket_keeper_service->add($create_request->wicketKeepers, $player_to_match_player_map);
+            $match_id = $match->id;
+            $this->totals_service->add(array_map(function (array $total) use ($match_id) {
+                return Total::from_total_request_entry($match_id, new TotalRequestEntry($total));
+            }, $create_request->totals));
 
             $this->db->commit();
         }
