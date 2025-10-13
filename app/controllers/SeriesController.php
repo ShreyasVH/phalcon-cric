@@ -43,6 +43,7 @@ use app\services\SeriesService;
 use app\services\SeriesTeamsMapService;
 use app\services\SeriesTypeService;
 use app\services\StadiumService;
+use app\services\TagMapService;
 use app\services\TeamService;
 use app\services\TeamTypeService;
 use app\services\TourService;
@@ -65,6 +66,7 @@ class SeriesController extends BaseController
     protected StadiumService $stadium_service;
     protected ResultTypeService $result_type_service;
     protected WinMarginTypeService $win_margin_type_service;
+    protected TagMapService $tag_map_service;
 
     public function onConstruct()
     {
@@ -82,6 +84,7 @@ class SeriesController extends BaseController
         $this->stadium_service = new StadiumService();
         $this->result_type_service = new ResultTypeService();
         $this->win_margin_type_service = new WinMarginTypeService();
+        $this->tag_map_service = new TagMapService();
     }
 
     /**
@@ -166,6 +169,7 @@ class SeriesController extends BaseController
             $series = $this->series_service->create($create_request);
             $this->series_teams_map_service->add($series->id, $create_request->teams);
             $this->man_of_the_series_service->add($series->id, $man_of_the_series_to_add);
+            $this->tag_map_service->create($series->id, $create_request->tags, "SERIES");
 
             $this->db->commit();
         }
