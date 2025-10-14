@@ -13,6 +13,7 @@ use app\models\ResultType;
 use app\models\Series;
 use app\models\SeriesTeamsMap;
 use app\models\Stadium;
+use app\models\TagMap;
 use app\models\Team;
 use app\models\TeamType;
 use app\models\SeriesType;
@@ -44,6 +45,7 @@ use app\services\SeriesTeamsMapService;
 use app\services\SeriesTypeService;
 use app\services\StadiumService;
 use app\services\TagMapService;
+use app\services\TagsService;
 use app\services\TeamService;
 use app\services\TeamTypeService;
 use app\services\TourService;
@@ -67,6 +69,7 @@ class SeriesController extends BaseController
     protected ResultTypeService $result_type_service;
     protected WinMarginTypeService $win_margin_type_service;
     protected TagMapService $tag_map_service;
+    protected TagsService $tags_service;
 
     public function onConstruct()
     {
@@ -85,6 +88,7 @@ class SeriesController extends BaseController
         $this->result_type_service = new ResultTypeService();
         $this->win_margin_type_service = new WinMarginTypeService();
         $this->tag_map_service = new TagMapService();
+        $this->tags_service = new TagsService();
     }
 
     /**
@@ -587,12 +591,19 @@ class SeriesController extends BaseController
             );
         }, $matches);
 
+        $tag_maps = $this->tag_map_service->get($id, "SERIES");
+        $tag_ids = array_map(function(TagMap $tag_map) {
+            return $tag_map->tag_id;
+        }, $tag_maps);
+        $tags = $this->tags_service->get_by_ids($tag_ids);
+
         $series_response = new SeriesDetailedResponse(
             $series,
             $series_type,
             $game_type,
             $team_responses,
-            $match_mini_responses
+            $match_mini_responses,
+            $tags
         );
 
         return $this->ok($series_response);

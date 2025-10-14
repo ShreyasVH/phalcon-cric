@@ -5,6 +5,7 @@ namespace app\responses;
 use app\models\GameType;
 use app\models\Series;
 use app\models\SeriesType;
+use app\models\Tag;
 
 class SeriesDetailedResponse
 {
@@ -16,6 +17,8 @@ class SeriesDetailedResponse
     public array $teams;
     /** @var MatchMiniResponse[]  */
     public array $matches;
+    /** @var Tag[] */
+    public array $tags;
 
     /**
      * SeriesDetailedResponse constructor.
@@ -24,8 +27,9 @@ class SeriesDetailedResponse
      * @param GameType $game_type
      * @param TeamResponse[] $teams
      * @param MatchMiniResponse[] $matches
+     * @param Tag[] $tags
      */
-    public function __construct(Series $series, SeriesType $series_type, GameType $game_type, array $teams, array $matches)
+    public function __construct(Series $series, SeriesType $series_type, GameType $game_type, array $teams, array $matches, array $tags)
     {
         $this->id = $series->id;
         $this->name = $series->name;
@@ -34,5 +38,6 @@ class SeriesDetailedResponse
         $this->startTime = $series->start_time;
         $this->teams = $teams;
         $this->matches = $matches;
+        $this->tags = $tags;
     }
 }

@@ -26,4 +26,15 @@ class TagMap extends BaseModel
             $tag_map->save();
         }
     }
+
+    public static function get(int $entity_id, string $tag_entity_type)
+    {
+        return self::toList(self::find([
+            'conditions' => 'entity_type = :entity_type: AND entity_id = :entity_id:',
+            'bind' => [
+                'entity_type' => $tag_entity_type,
+                'entity_id' => $entity_id
+            ]
+        ]));
+    }
 }

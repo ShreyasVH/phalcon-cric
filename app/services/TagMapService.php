@@ -12,4 +12,9 @@ class TagMapService
     {
         TagMap::add($entity_id, $tag_ids, $tag_entity_type);
     }
+
+    public function get(int $entity_id, string $tag_entity_type)
+    {
+        return TagMap::get($entity_id, $tag_entity_type);
+    }
 }
