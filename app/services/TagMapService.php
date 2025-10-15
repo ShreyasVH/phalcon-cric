@@ -17,4 +17,9 @@ class TagMapService
     {
         return TagMap::get($entity_id, $tag_entity_type);
     }
+
+    public function remove(int $entity_id, string $tag_entity_type)
+    {
+        TagMap::remove($entity_id, $tag_entity_type);
+    }
 }

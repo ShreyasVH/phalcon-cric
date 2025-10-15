@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\enums\TagEntityType;
 use app\exceptions\BadRequestException;
 use app\exceptions\ConflictException;
 use app\exceptions\NotFoundException;
@@ -173,7 +174,7 @@ class SeriesController extends BaseController
             $series = $this->series_service->create($create_request);
             $this->series_teams_map_service->add($series->id, $create_request->teams);
             $this->man_of_the_series_service->add($series->id, $man_of_the_series_to_add);
-            $this->tag_map_service->create($series->id, $create_request->tags, "SERIES");
+            $this->tag_map_service->create($series->id, $create_request->tags, TagEntityType::SERIES);
 
             $this->db->commit();
         }
@@ -636,6 +637,7 @@ class SeriesController extends BaseController
             $this->man_of_the_series_service->remove($id);
             $this->series_teams_map_service->remove($id);
             $this->series_service->remove($id);
+            $this->tag_map_service->remove($id, TagEntityType::SERIES);
 
             $this->db->commit();
         }

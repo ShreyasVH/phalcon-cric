@@ -15,7 +15,8 @@ $loader->setDirectories
         APP_PATH . 'app/exceptions/',
         APP_PATH . 'app/middlewares/',
         APP_PATH . 'app/services/',
-        APP_PATH . 'app/requests/'
+        APP_PATH . 'app/requests/',
+        APP_PATH . 'app/enums/'
     )
 
 )->register();
@@ -32,7 +33,8 @@ $loader->setNamespaces
         'app\\exceptions' => APP_PATH . 'app/exceptions',
         'app\\middlewares' => APP_PATH . 'app/middlewares',
         'app\\services' => APP_PATH . 'app/services',
-        'app\\requests' => APP_PATH . 'app/requests'
+        'app\\requests' => APP_PATH . 'app/requests',
+        'app\\enums' => APP_PATH . 'app/enums'
 
     )
 
