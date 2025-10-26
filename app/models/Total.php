@@ -44,4 +44,27 @@ class Total extends BaseModel
             $total->save();
         }
     }
+
+    /**
+     * @param int $match_id
+     * @return Total[]
+     */
+    public static function get_by_match_id(int $match_id): array
+    {
+        return self::toList(self::find([
+            'conditions' => 'match_id = :matchId:',
+            'bind' => ['matchId' => $match_id]
+        ]));
+    }
+
+    /**
+     * @param int $match_id
+     */
+    public static function remove(int $match_id)
+    {
+        foreach(self::get_by_match_id($match_id) as $total)
+        {
+            $total->delete();
+        }
+    }
 }

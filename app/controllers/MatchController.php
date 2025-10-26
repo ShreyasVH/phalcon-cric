@@ -650,6 +650,7 @@ class MatchController extends BaseController
             $this->batting_score_service->remove($match_player_ids);
             $this->bowling_figure_service->remove($match_player_ids);
             $this->match_player_map_service->remove($id);
+            $this->totals_service->remove($id);
             $this->match_service->remove($id);
 
             $this->db->commit();

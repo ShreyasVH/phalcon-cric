@@ -15,4 +15,12 @@ class TotalsService
     {
         Total::add($totals);
     }
+
+    /**
+     * @param int $match_id
+     */
+    public function remove(int $match_id)
+    {
+        Total::remove($match_id);
+    }
 }
