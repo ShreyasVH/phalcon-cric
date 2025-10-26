@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\enums\TagEntityType;
 use app\exceptions\BadRequestException;
 use app\exceptions\ConflictException;
 use app\exceptions\NotFoundException;
@@ -13,6 +14,7 @@ use app\models\ResultType;
 use app\models\Series;
 use app\models\SeriesTeamsMap;
 use app\models\Stadium;
+use app\models\TagMap;
 use app\models\Team;
 use app\models\TeamType;
 use app\models\SeriesType;
@@ -43,6 +45,8 @@ use app\services\SeriesService;
 use app\services\SeriesTeamsMapService;
 use app\services\SeriesTypeService;
 use app\services\StadiumService;
+use app\services\TagMapService;
+use app\services\TagsService;
 use app\services\TeamService;
 use app\services\TeamTypeService;
 use app\services\TourService;
@@ -65,6 +69,8 @@ class SeriesController extends BaseController
     protected StadiumService $stadium_service;
     protected ResultTypeService $result_type_service;
     protected WinMarginTypeService $win_margin_type_service;
+    protected TagMapService $tag_map_service;
+    protected TagsService $tags_service;
 
     public function onConstruct()
     {
@@ -82,6 +88,8 @@ class SeriesController extends BaseController
         $this->stadium_service = new StadiumService();
         $this->result_type_service = new ResultTypeService();
         $this->win_margin_type_service = new WinMarginTypeService();
+        $this->tag_map_service = new TagMapService();
+        $this->tags_service = new TagsService();
     }
 
     /**
@@ -166,6 +174,7 @@ class SeriesController extends BaseController
             $series = $this->series_service->create($create_request);
             $this->series_teams_map_service->add($series->id, $create_request->teams);
             $this->man_of_the_series_service->add($series->id, $man_of_the_series_to_add);
+            $this->tag_map_service->create($series->id, $create_request->tags, TagEntityType::SERIES);
 
             $this->db->commit();
         }
@@ -583,12 +592,19 @@ class SeriesController extends BaseController
             );
         }, $matches);
 
+        $tag_maps = $this->tag_map_service->get($id, "SERIES");
+        $tag_ids = array_map(function(TagMap $tag_map) {
+            return $tag_map->tag_id;
+        }, $tag_maps);
+        $tags = $this->tags_service->get_by_ids($tag_ids);
+
         $series_response = new SeriesDetailedResponse(
             $series,
             $series_type,
             $game_type,
             $team_responses,
-            $match_mini_responses
+            $match_mini_responses,
+            $tags
         );
 
         return $this->ok($series_response);
@@ -621,6 +637,7 @@ class SeriesController extends BaseController
             $this->man_of_the_series_service->remove($id);
             $this->series_teams_map_service->remove($id);
             $this->series_service->remove($id);
+            $this->tag_map_service->remove($id, TagEntityType::SERIES);
 
             $this->db->commit();
         }

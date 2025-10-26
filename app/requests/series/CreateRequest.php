@@ -14,8 +14,9 @@ class CreateRequest
     public $startTime;
     public array $teams;
     public ?array $manOfTheSeriesList;
+    public ?array $tags;
 
-    public function __construct($name, $homeCountryId, $tourId, $typeId, $gameTypeId, $startTime, $teams, $manOfTheSeriesList)
+    public function __construct($name, $homeCountryId, $tourId, $typeId, $gameTypeId, $startTime, $teams, $manOfTheSeriesList, $tags)
     {
         $this->name = $name;
         $this->homeCountryId = $homeCountryId;
@@ -25,6 +26,7 @@ class CreateRequest
         $this->startTime = $startTime;
         $this->teams = $teams;
         $this->manOfTheSeriesList = $manOfTheSeriesList;
+        $this->tags = $tags;
     }
 
     public function validate()
@@ -47,6 +49,6 @@ class CreateRequest
 
     public static function fromPostRequest(array $request)
     {
-        return new CreateRequest($request['name'], $request['homeCountryId'], $request['tourId'], $request['typeId'], $request['gameTypeId'], $request['startTime'], $request['teams'], (array_key_exists('manOfTheSeriesList', $request) ? $request['manOfTheSeriesList'] : []));
+        return new CreateRequest($request['name'], $request['homeCountryId'], $request['tourId'], $request['typeId'], $request['gameTypeId'], $request['startTime'], $request['teams'], (array_key_exists('manOfTheSeriesList', $request) ? $request['manOfTheSeriesList'] : []), (array_key_exists('tags', $request) ? $request['tags'] : []));
     }
 }

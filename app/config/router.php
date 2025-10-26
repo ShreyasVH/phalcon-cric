@@ -76,6 +76,13 @@ $matches->delete('/cric/v1/matches/{id:[0-9]+}', 'remove');
 
 $application->mount($matches);
 
+$tags = new Collection();
+$tags->setHandler('app\controllers\TagsController', true);
+
+$tags->get('/cric/v1/tags', 'getAll');
+
+$application->mount($tags);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();
