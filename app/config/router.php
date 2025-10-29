@@ -83,6 +83,13 @@ $tags->get('/cric/v1/tags', 'getAll');
 
 $application->mount($tags);
 
+$stats = new Collection();
+$stats->setHandler('app\controllers\StatsController', true);
+
+$stats->post('/cric/v1/stats', 'get_stats');
+
+$application->mount($stats);
+
 $application->notFound(function () use ($application) {
     $application->response->setStatusCode(404, 'Not Found');
     $application->response->sendHeaders();
