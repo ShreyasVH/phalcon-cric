@@ -291,4 +291,111 @@ class PlayerRepository extends Injectable
 
         return $stats_response;
     }
+
+    public function get_fielding_stats(FilterRequest $filter_request): StatsResponse
+    {
+        $stats_response = new StatsResponse();
+        $stat_list = [];
+
+        $query = "select p.id as playerId, p.name AS name, SUM(case when dm.name = 'Caught' and wk.id is null then 1 else 0 end) as `fielderCatches`, SUM(case when dm.name = 'Caught' and wk.id is not null then 1 else 0 end) as `keeperCatches`, SUM(case when dm.name = 'Stumped' then 1 else 0 end) as `stumpings`, SUM(case when dm.name = 'Run Out' then 1 else 0 end) as `runOuts` from fielder_dismissals fd " .
+            "inner join match_player_map mpm on mpm.id = fd.match_player_id " .
+            "inner join players p on p.id = mpm.player_id " .
+            "inner join matches m on m.id = mpm.match_id " .
+            "inner join series s on s.id = m.series_id " .
+            "inner join stadiums st on st.id = m.stadium_id " .
+            "inner join batting_scores bs on bs.id = fd.score_id " .
+            "inner join dismissal_modes dm on dm.id = bs.dismissal_mode_id " .
+            "inner join teams t on t.id = mpm.team_id " .
+            "left join wicket_keepers wk on wk.match_player_id = fd.match_player_id";
+
+        $count_query = "select count(distinct p.id) as count from fielder_dismissals fd " .
+            "inner join match_player_map mpm on mpm.id = fd.match_player_id " .
+            "inner join players p on p.id = mpm.player_id " .
+            "inner join matches m on m.id = mpm.match_id " .
+            "inner join series s on s.id = m.series_id " .
+            "inner join stadiums st on st.id = m.stadium_id " .
+            "inner join batting_scores bs on bs.id = fd.score_id " .
+            "inner join dismissal_modes dm on dm.id = bs.dismissal_mode_id " .
+            "inner join teams t on t.id = mpm.team_id " .
+            "left join wicket_keepers wk on wk.match_player_id = fd.match_player_id";
+
+        $where_query_parts = [
+            $this->get_field_name_with_table_prefix('playerName') . " != 'sub'"
+        ];
+
+        foreach($filter_request->filters as $field => $value_list)
+        {
+            $field_name_with_table_prefix = $this->get_field_name_with_table_prefix($field);
+            if(!empty($field_name_with_table_prefix) && !empty($value_list))
+            {
+                $where_query_parts[] = $field_name_with_table_prefix . " in (" . implode(", ", $value_list) .  ")";
+            }
+        }
+
+        foreach($filter_request->rangeFilters as $field => $range_values)
+        {
+            $field_name_with_table_prefix = $this->get_field_name_with_table_prefix($field);
+            if(!empty($field_name_with_table_prefix) && !empty($range_values))
+            {
+                if(array_key_exists('from', $range_values))
+                {
+                    $where_query_parts[] = $field_name_with_table_prefix . " >= " . $range_values['from'];
+                }
+
+                if(array_key_exists('to', $range_values))
+                {
+                    $where_query_parts[] = $field_name_with_table_prefix . " <= " . $range_values['to'];
+                }
+            }
+        }
+
+        if(!empty($where_query_parts))
+        {
+            $count_query .= " where " . implode(" and ", $where_query_parts);
+            $query .= " where " . implode(" and ", $where_query_parts);
+        }
+
+        $query .= " group by playerId";
+
+        $sort_list = [];
+        foreach($filter_request->sortMap as $field => $value)
+        {
+            $sort_field_name = $this->get_field_name_for_display($field);
+            if(!empty($sort_field_name))
+            {
+                $sort_list[] = $sort_field_name . " " . $value;
+            }
+        }
+
+        if(empty($sort_list))
+        {
+            $sort_list[] = $this->get_field_name_for_display("fielderCatches") . " desc";
+        }
+        $query .= " order by " . implode(", ", $sort_list);
+
+        $query .= " limit " . min(30, $filter_request->count) . " offset " . $filter_request->offset;
+
+        $sql_count_query = $this->_db->query($count_query);
+        $count_result = $sql_count_query->fetchArray();
+        $stats_response->count = $count_result['count'];
+
+        $sql_query = $this->_db->query($query);
+        $result = $sql_query->fetchAll();
+
+        foreach($result as $row)
+        {
+            $stat_list[] = [
+                'id' => (string) $row['playerId'],
+                'name' => $row['name'],
+                'fielderCatches' => (string) $row['fielderCatches'],
+                'keeperCatches' => (string) $row['keeperCatches'],
+                'stumpings' => (string) $row['stumpings'],
+                'runOuts' => (string) $row['runOuts']
+            ];
+        }
+
+        $stats_response->stats = $stat_list;
+
+        return $stats_response;
+    }
 }

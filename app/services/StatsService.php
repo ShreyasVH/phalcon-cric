@@ -28,6 +28,10 @@ class StatsService
         {
             $stats_response = $this->player_repository->get_bowling_stats($filter_request);
         }
+        else if('fielding' === $filter_request->type)
+        {
+            $stats_response = $this->player_repository->get_fielding_stats($filter_request);
+        }
 
         return $stats_response;
     }
