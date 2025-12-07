@@ -123,7 +123,7 @@ class PlayerRepository extends Injectable
 
                 if(array_key_exists('to', $range_values))
                 {
-                    $where_query_parts[] = $field_name_with_table_prefix . " >= " . $range_values['to'];
+                    $where_query_parts[] = $field_name_with_table_prefix . " <= " . $range_values['to'];
                 }
             }
         }
