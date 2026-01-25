@@ -1,6 +1,6 @@
 {
     "require-dev": {
         "phalcon/migrations": "^3.0",
-        "phalcon/ide-stubs": "^v5.0"
+        "phalcon/ide-stubs": "^v5.9.3"
     }
 }
