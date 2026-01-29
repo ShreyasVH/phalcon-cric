@@ -29,8 +29,9 @@ class MatchResponse
     public array $manOfTheMatchList;
     public array $captains;
     public array $wicketKeepers;
+    public array $tags;
 
-    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers)
+    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers, array $tags)
     {
         $this->id = $match->id;
         $this->series = new SeriesMiniResponse($series, $game_type);
@@ -82,5 +83,7 @@ class MatchResponse
         $this->wicketKeepers = array_map(function ($player_id) use ($player_map) {
             return $player_map[$player_id];
         }, $wicket_keepers);
+
+        $this->tags = $tags;
     }
 }

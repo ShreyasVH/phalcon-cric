@@ -27,6 +27,7 @@ class CreateRequest
     public array $wicketKeepers = [];
     public bool $isOfficial = true;
     public array $totals = [];
+    public array $tags = [];
 
     public function __construct(array $create_request)
     {
@@ -132,6 +133,11 @@ class CreateRequest
         if(array_key_exists('totals', $create_request) && is_array($create_request['totals']))
         {
             $this->totals = $create_request['totals'];
+        }
+
+        if(array_key_exists('tags', $create_request) && is_array($create_request['tags']))
+        {
+            $this->tags = $create_request['tags'];
         }
     }
 

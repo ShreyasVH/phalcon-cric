@@ -4,6 +4,7 @@
 namespace app\controllers;
 
 
+use app\enums\TagEntityType;
 use app\exceptions\NotFoundException;
 use app\models\BattingScore;
 use app\models\BowlingFigure;
@@ -21,6 +22,7 @@ use app\models\Player;
 use app\models\ResultType;
 use app\models\Series;
 use app\models\Stadium;
+use app\models\TagMap;
 use app\models\Team;
 use app\models\TeamType;
 use app\models\WicketKeeper;
@@ -59,6 +61,8 @@ use app\services\PlayerService;
 use app\services\ResultTypeService;
 use app\services\SeriesService;
 use app\services\StadiumService;
+use app\services\TagMapService;
+use app\services\TagsService;
 use app\services\TeamService;
 use app\services\TeamTypeService;
 use app\services\TotalsService;
@@ -91,6 +95,8 @@ class MatchController extends BaseController
     protected WicketKeeperService $wicket_keeper_service;
     protected GameTypeService $game_type_service;
     protected TotalsService $totals_service;
+    protected TagMapService $tag_map_service;
+    protected TagsService $tags_service;
 
     public function onConstruct()
     {
@@ -116,6 +122,8 @@ class MatchController extends BaseController
         $this->wicket_keeper_service = new WicketKeeperService();
         $this->game_type_service = new GameTypeService();
         $this->totals_service = new TotalsService();
+        $this->tag_map_service = new TagMapService();
+        $this->tags_service = new TagsService();
     }
 
     /**
@@ -227,6 +235,8 @@ class MatchController extends BaseController
         $country_map = array_combine(array_map(function(Country $country) {
             return $country->id;
         }, $countries), $countries);
+
+        $tags = $this->tags_service->get_by_ids($create_request->tags);
 
         try
         {
@@ -341,6 +351,7 @@ class MatchController extends BaseController
             $this->totals_service->add(array_map(function (array $total) use ($match_id) {
                 return Total::from_total_request_entry($match_id, new TotalRequestEntry($total));
             }, $create_request->totals));
+            $this->tag_map_service->create($match_id, $create_request->tags, TagEntityType::MATCH);
 
             $this->db->commit();
         }
@@ -378,7 +389,8 @@ class MatchController extends BaseController
             $extras_responses,
             $create_request->manOfTheMatchList,
             $create_request->captains,
-            $create_request->wicketKeepers
+            $create_request->wicketKeepers,
+            $tags
         );
 
         return $this->created($match_response);
@@ -595,6 +607,12 @@ class MatchController extends BaseController
             );
         }, $extras_list);
 
+        $tag_maps = $this->tag_map_service->get($id, TagEntityType::MATCH);
+        $tag_ids = array_map(function(TagMap $tag_map) {
+            return $tag_map->tag_id;
+        }, $tag_maps);
+        $tags = $this->tags_service->get_by_ids($tag_ids);
+
         $match_response = new MatchResponse(
             $match,
             $series,
@@ -616,7 +634,8 @@ class MatchController extends BaseController
             }, $captains),
             array_map(function (WicketKeeper $wicket_keeper) use ($player_map, $match_player_to_player_map) {
                 return $match_player_to_player_map[$wicket_keeper->match_player_id];
-            }, $wicket_keepers)
+            }, $wicket_keepers),
+            $tags
         );
 
         return $this->ok($match_response);
@@ -642,6 +661,7 @@ class MatchController extends BaseController
             $match_player_ids = array_map(function ($mpm) {
                 return $mpm->id;
             }, $match_player_maps);
+            $this->tag_map_service->remove($id, TagEntityType::MATCH);
             $this->extras_service->remove($id);
             $this->captain_service->remove($match_player_ids);
             $this->wicket_keeper_service->remove($match_player_ids);
