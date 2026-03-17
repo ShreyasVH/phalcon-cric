@@ -1,4 +1,5 @@
-# php path
+# php 8.4.17 path
+export PATH=
 export PATH=
 
 export PORT=
