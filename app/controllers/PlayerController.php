@@ -106,70 +106,70 @@ class PlayerController extends BaseController
         $dismissal_stats = $this->_batting_score_service->get_dismissal_stats($id);
         $player_response->dismissalStats = $dismissal_stats;
 
-//        $dismissal_count_map = [];
-//        foreach($dismissal_stats as $game_type => $game_type_dismissal_stats)
-//        {
-//            $dismissal_count = 0;
-//
-//            foreach($game_type_dismissal_stats as $dismissal_mode => $count)
-//            {
-//                $dismissal_count += $count;
-//            }
-//
-//            $dismissal_count_map[$game_type] = $dismissal_count;
-//        }
-//
-//        $basic_batting_stats = $this->_batting_score_service->get_batting_stats($id);
-//        if(!empty($basic_batting_stats))
-//        {
-//            $batting_stats_map = [];
-//
-//            foreach($basic_batting_stats as $game_type => $batting_stats)
-//            {
-//                $batting_stats = new BattingStats($batting_stats);
-//                $batting_stats->notOuts = $batting_stats->innings - ($dismissal_count_map[$game_type] ?? 0);
-//
-//                if(($dismissal_count_map[$game_type] ?? 0) > 0)
-//                {
-//                    $batting_stats->average = $batting_stats->runs / $dismissal_count_map[$game_type];
-//                }
-//
-//                if($batting_stats->balls > 0)
-//                {
-//                    $batting_stats->strikeRate = $batting_stats->runs * 100 / $batting_stats->balls;
-//                }
-//
-//                $batting_stats_map[$game_type] = $batting_stats;
-//            }
-//
-//            $player_response->battingStats = $batting_stats_map;
-//        }
-//
-//        $basic_bowling_stats = $this->_bowling_figure_service->get_bowling_stats($id);
-//        if(!empty($basic_bowling_stats))
-//        {
-//            $bowling_stats_final = [];
-//
-//            foreach($basic_bowling_stats as $game_type => $game_type_bowling_stats)
-//            {
-//                $bowling_stats = new BowlingStats($game_type_bowling_stats);
-//
-//                if($bowling_stats->balls > 0)
-//                {
-//                    $bowling_stats->economy = $bowling_stats->runs * 6 / $bowling_stats->balls;
-//
-//                    if($bowling_stats->wickets > 0)
-//                    {
-//                        $bowling_stats->average = $bowling_stats->runs / $bowling_stats->wickets;
-//                        $bowling_stats->strikeRate = $bowling_stats->balls / $bowling_stats->wickets;
-//                    }
-//                }
-//
-//                $bowling_stats_final[$game_type] = $bowling_stats;
-//            }
-//
-//            $player_response->bowlingStats = $bowling_stats_final;
-//        }
+        $dismissal_count_map = [];
+        foreach($dismissal_stats as $game_type => $game_type_dismissal_stats)
+        {
+            $dismissal_count = 0;
+
+            foreach($game_type_dismissal_stats as $dismissal_mode => $count)
+            {
+                $dismissal_count += $count;
+            }
+
+            $dismissal_count_map[$game_type] = $dismissal_count;
+        }
+
+        $basic_batting_stats = $this->_batting_score_service->get_batting_stats($id);
+        if(!empty($basic_batting_stats))
+        {
+            $batting_stats_map = [];
+
+            foreach($basic_batting_stats as $game_type => $batting_stats)
+            {
+                $batting_stats = new BattingStats($batting_stats);
+                $batting_stats->notOuts = $batting_stats->innings - ($dismissal_count_map[$game_type] ?? 0);
+
+                if(($dismissal_count_map[$game_type] ?? 0) > 0)
+                {
+                    $batting_stats->average = $batting_stats->runs / $dismissal_count_map[$game_type];
+                }
+
+                if($batting_stats->balls > 0)
+                {
+                    $batting_stats->strikeRate = $batting_stats->runs * 100 / $batting_stats->balls;
+                }
+
+                $batting_stats_map[$game_type] = $batting_stats;
+            }
+
+            $player_response->battingStats = $batting_stats_map;
+        }
+
+        $basic_bowling_stats = $this->_bowling_figure_service->get_bowling_stats($id);
+        if(!empty($basic_bowling_stats))
+        {
+            $bowling_stats_final = [];
+
+            foreach($basic_bowling_stats as $game_type => $game_type_bowling_stats)
+            {
+                $bowling_stats = new BowlingStats($game_type_bowling_stats);
+
+                if($bowling_stats->balls > 0)
+                {
+                    $bowling_stats->economy = $bowling_stats->runs * 6 / $bowling_stats->balls;
+
+                    if($bowling_stats->wickets > 0)
+                    {
+                        $bowling_stats->average = $bowling_stats->runs / $bowling_stats->wickets;
+                        $bowling_stats->strikeRate = $bowling_stats->balls / $bowling_stats->wickets;
+                    }
+                }
+
+                $bowling_stats_final[$game_type] = $bowling_stats;
+            }
+
+            $player_response->bowlingStats = $bowling_stats_final;
+        }
 //
 //        $fielding_stats_map = $this->_fielder_dismissal_service->get_fielding_stats($id);
 //        if(!empty($fielding_stats_map))
