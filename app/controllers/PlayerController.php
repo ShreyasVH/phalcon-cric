@@ -170,18 +170,18 @@ class PlayerController extends BaseController
 
             $player_response->bowlingStats = $bowling_stats_final;
         }
-//
-//        $fielding_stats_map = $this->_fielder_dismissal_service->get_fielding_stats($id);
-//        if(!empty($fielding_stats_map))
-//        {
-//            $fielding_stats_map_final = [];
-//            foreach($fielding_stats_map as $game_type => $fielding_stats)
-//            {
-//                $fielding_stats_map_final[$game_type] = new FieldingStats($fielding_stats);
-//            }
-//
-//            $player_response->fieldingStats = $fielding_stats_map_final;
-//        }
+
+        $fielding_stats_map = $this->_fielder_dismissal_service->get_fielding_stats($id);
+        if(!empty($fielding_stats_map))
+        {
+            $fielding_stats_map_final = [];
+            foreach($fielding_stats_map as $game_type => $fielding_stats)
+            {
+                $fielding_stats_map_final[$game_type] = new FieldingStats($fielding_stats);
+            }
+
+            $player_response->fieldingStats = $fielding_stats_map_final;
+        }
 
         return $this->ok($player_response);
     }
