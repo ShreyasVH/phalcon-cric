@@ -22,4 +22,9 @@ class TagsService
     {
         return Tag::getByIds($ids);
     }
+
+    public function get_by_type(string $type): array
+    {
+        return Tag::get_by_type($type);
+    }
 }

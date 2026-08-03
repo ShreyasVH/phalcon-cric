@@ -33,4 +33,12 @@ class Tag extends BaseModel
     {
         return self::count();
     }
+
+    public static function get_by_type(string $type) : array
+    {
+        return self::toList(self::find([
+            'conditions' => 'type = :type:',
+            'bind' => ['type' => $type]
+        ]));
+    }
 }
