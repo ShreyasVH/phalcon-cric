@@ -52,6 +52,7 @@ class PlayerRepository extends Injectable
             "series" => "s.id",
             "year" => "YEAR(m.start_time)",
             "playerName" => "p.name",
+            "seriesTags" => "tm.tag_id",
             default => "",
         };
     }
@@ -100,6 +101,12 @@ class PlayerRepository extends Injectable
             "inner join series s on s.id = m.series_id " .
             "inner join stadiums st on st.id = m.stadium_id " .
             "inner join teams t on t.id = mpm.team_id";
+
+        if(array_key_exists('seriesTags', $filter_request->filters))
+        {
+            $query .= " left join tags_map tm on tm.entity_id = s.id";
+            $count_query .= " left join tags_map tm on tm.entity_id = s.id";
+        }
 
         $where_query_parts = [];
         foreach($filter_request->filters as $field => $value_list)
