@@ -8,6 +8,7 @@ class Tag extends BaseModel
 {
     public $id;
     public $name;
+    public $type;
 
     public function initialize()
     {
