@@ -215,6 +215,12 @@ class PlayerRepository extends Injectable
             "inner join stadiums st on st.id = m.stadium_id " .
             "inner join teams t on t.id = mpm.team_id";
 
+        if(array_key_exists('seriesTags', $filter_request->filters))
+        {
+            $query .= " left join tags_map tm on tm.entity_id = s.id";
+            $count_query .= " left join tags_map tm on tm.entity_id = s.id";
+        }
+
         $where_query_parts = [];
         foreach($filter_request->filters as $field => $value_list)
         {
@@ -325,6 +331,12 @@ class PlayerRepository extends Injectable
             "inner join dismissal_modes dm on dm.id = bs.dismissal_mode_id " .
             "inner join teams t on t.id = mpm.team_id " .
             "left join wicket_keepers wk on wk.match_player_id = fd.match_player_id";
+
+        if(array_key_exists('seriesTags', $filter_request->filters))
+        {
+            $query .= " left join tags_map tm on tm.entity_id = s.id";
+            $count_query .= " left join tags_map tm on tm.entity_id = s.id";
+        }
 
         $where_query_parts = [
             $this->get_field_name_with_table_prefix('playerName') . " != 'sub'"
