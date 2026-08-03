@@ -592,11 +592,15 @@ class SeriesController extends BaseController
             );
         }, $matches);
 
-        $tag_maps = $this->tag_map_service->get($id, "SERIES");
+        $series_tags = $this->tags_service->get_by_type("SERIES");
+        $series_tag_ids = array_map(function ($tag) { return $tag->id; }, $series_tags);
+        $tag_maps = $this->tag_map_service->get_maps($id, $series_tag_ids);
         $tag_ids = array_map(function(TagMap $tag_map) {
             return $tag_map->tag_id;
         }, $tag_maps);
-        $tags = $this->tags_service->get_by_ids($tag_ids);
+        $tags = array_filter($series_tags, function($tag) use ($tag_ids) {
+            return in_array($tag->id, $tag_ids);
+        });
 
         $series_response = new SeriesDetailedResponse(
             $series,
@@ -630,6 +634,9 @@ class SeriesController extends BaseController
             throw new ConflictException('Matches still exist');
         }
 
+        $series_tags = $this->tags_service->get_by_type("SERIES");
+        $series_tag_ids = array_map(function ($tag) { return $tag->id; }, $series_tags);
+
         try
         {
             $this->db->begin();
@@ -637,7 +644,7 @@ class SeriesController extends BaseController
             $this->man_of_the_series_service->remove($id);
             $this->series_teams_map_service->remove($id);
             $this->series_service->remove($id);
-            $this->tag_map_service->remove($id, TagEntityType::SERIES);
+            $this->tag_map_service->remove_maps($id, $series_tag_ids);
 
             $this->db->commit();
         }

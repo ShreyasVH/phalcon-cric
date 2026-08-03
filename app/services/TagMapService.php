@@ -22,4 +22,14 @@ class TagMapService
     {
         TagMap::remove($entity_id, $tag_entity_type);
     }
+
+    public function get_maps(int $entity_id, array $tag_ids)
+    {
+        return TagMap::get_maps($entity_id, $tag_ids);
+    }
+
+    public function remove_maps(int $entity_id, array $tag_ids)
+    {
+        TagMap::remove_maps($entity_id, $tag_ids);
+    }
 }
