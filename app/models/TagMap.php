@@ -56,4 +56,12 @@ class TagMap extends BaseModel
             ]
         ]));
     }
+
+    public static function remove_maps(int $entity_id, array $tag_ids)
+    {
+        foreach(self::get_maps($entity_id, $tag_ids) as $tag_map)
+        {
+            $tag_map->delete();
+        }
+    }
 }

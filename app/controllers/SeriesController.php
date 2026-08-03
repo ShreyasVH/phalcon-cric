@@ -634,6 +634,9 @@ class SeriesController extends BaseController
             throw new ConflictException('Matches still exist');
         }
 
+        $series_tags = $this->tags_service->get_by_type("SERIES");
+        $series_tag_ids = array_map(function ($tag) { return $tag->id; }, $series_tags);
+
         try
         {
             $this->db->begin();
@@ -641,7 +644,7 @@ class SeriesController extends BaseController
             $this->man_of_the_series_service->remove($id);
             $this->series_teams_map_service->remove($id);
             $this->series_service->remove($id);
-            $this->tag_map_service->remove($id, TagEntityType::SERIES);
+            $this->tag_map_service->remove_maps($id, $series_tag_ids);
 
             $this->db->commit();
         }
