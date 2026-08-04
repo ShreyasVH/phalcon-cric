@@ -607,11 +607,15 @@ class MatchController extends BaseController
             );
         }, $extras_list);
 
-        $tag_maps = $this->tag_map_service->get($id, TagEntityType::MATCH);
+        $match_tags = $this->tags_service->get_by_type("MATCH");
+        $match_tag_ids = array_map(function ($tag) { return $tag->id; }, $match_tags);
+        $tag_maps = $this->tag_map_service->get_maps($id, $match_tag_ids);
         $tag_ids = array_map(function(TagMap $tag_map) {
             return $tag_map->tag_id;
         }, $tag_maps);
-        $tags = $this->tags_service->get_by_ids($tag_ids);
+        $tags = array_filter($match_tags, function($tag) use ($tag_ids) {
+            return in_array($tag->id, $tag_ids);
+        });
 
         $match_response = new MatchResponse(
             $match,
