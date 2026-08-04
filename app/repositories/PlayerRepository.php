@@ -53,6 +53,7 @@ class PlayerRepository extends Injectable
             "year" => "YEAR(m.start_time)",
             "playerName" => "p.name",
             "seriesTags" => "tm.tag_id",
+            "matchTags" => "tmm.tag_id",
             default => "",
         };
     }
@@ -106,6 +107,12 @@ class PlayerRepository extends Injectable
         {
             $query .= " left join tags_map tm on tm.entity_id = s.id";
             $count_query .= " left join tags_map tm on tm.entity_id = s.id";
+        }
+
+        if(array_key_exists('matchTags', $filter_request->filters))
+        {
+            $query .= " left join tags_map tmm on tmm.entity_id = m.id";
+            $count_query .= " left join tags_map tmm on tmm.entity_id = m.id";
         }
 
         $where_query_parts = [];
@@ -219,6 +226,12 @@ class PlayerRepository extends Injectable
         {
             $query .= " left join tags_map tm on tm.entity_id = s.id";
             $count_query .= " left join tags_map tm on tm.entity_id = s.id";
+        }
+
+        if(array_key_exists('matchTags', $filter_request->filters))
+        {
+            $query .= " left join tags_map tmm on tmm.entity_id = m.id";
+            $count_query .= " left join tags_map tmm on tmm.entity_id = m.id";
         }
 
         $where_query_parts = [];
@@ -336,6 +349,12 @@ class PlayerRepository extends Injectable
         {
             $query .= " left join tags_map tm on tm.entity_id = s.id";
             $count_query .= " left join tags_map tm on tm.entity_id = s.id";
+        }
+
+        if(array_key_exists('matchTags', $filter_request->filters))
+        {
+            $query .= " left join tags_map tmm on tmm.entity_id = m.id";
+            $count_query .= " left join tags_map tmm on tmm.entity_id = m.id";
         }
 
         $where_query_parts = [
