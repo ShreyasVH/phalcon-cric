@@ -657,6 +657,9 @@ class MatchController extends BaseController
             throw new NotFoundException('Match');
         }
 
+        $match_tags = $this->tags_service->get_by_type("MATCH");
+        $match_tag_ids = array_map(function ($tag) { return $tag->id; }, $match_tags);
+
         try
         {
             $this->db->begin();
@@ -665,7 +668,7 @@ class MatchController extends BaseController
             $match_player_ids = array_map(function ($mpm) {
                 return $mpm->id;
             }, $match_player_maps);
-            $this->tag_map_service->remove($id, TagEntityType::MATCH);
+            $this->tag_map_service->remove_maps($id, $match_tag_ids);
             $this->extras_service->remove($id);
             $this->captain_service->remove($match_player_ids);
             $this->wicket_keeper_service->remove($match_player_ids);
