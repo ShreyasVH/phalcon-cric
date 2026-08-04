@@ -351,7 +351,7 @@ class MatchController extends BaseController
             $this->totals_service->add(array_map(function (array $total) use ($match_id) {
                 return Total::from_total_request_entry($match_id, new TotalRequestEntry($total));
             }, $create_request->totals));
-            $this->tag_map_service->create($match_id, $create_request->tags, TagEntityType::MATCH);
+            $this->tag_map_service->create($match_id, $create_request->tags);
 
             $this->db->commit();
         }
@@ -607,11 +607,15 @@ class MatchController extends BaseController
             );
         }, $extras_list);
 
-        $tag_maps = $this->tag_map_service->get($id, TagEntityType::MATCH);
+        $match_tags = $this->tags_service->get_by_type("MATCH");
+        $match_tag_ids = array_map(function ($tag) { return $tag->id; }, $match_tags);
+        $tag_maps = $this->tag_map_service->get_maps($id, $match_tag_ids);
         $tag_ids = array_map(function(TagMap $tag_map) {
             return $tag_map->tag_id;
         }, $tag_maps);
-        $tags = $this->tags_service->get_by_ids($tag_ids);
+        $tags = array_filter($match_tags, function($tag) use ($tag_ids) {
+            return in_array($tag->id, $tag_ids);
+        });
 
         $match_response = new MatchResponse(
             $match,
@@ -653,6 +657,9 @@ class MatchController extends BaseController
             throw new NotFoundException('Match');
         }
 
+        $match_tags = $this->tags_service->get_by_type("MATCH");
+        $match_tag_ids = array_map(function ($tag) { return $tag->id; }, $match_tags);
+
         try
         {
             $this->db->begin();
@@ -661,7 +668,7 @@ class MatchController extends BaseController
             $match_player_ids = array_map(function ($mpm) {
                 return $mpm->id;
             }, $match_player_maps);
-            $this->tag_map_service->remove($id, TagEntityType::MATCH);
+            $this->tag_map_service->remove_maps($id, $match_tag_ids);
             $this->extras_service->remove($id);
             $this->captain_service->remove($match_player_ids);
             $this->wicket_keeper_service->remove($match_player_ids);
