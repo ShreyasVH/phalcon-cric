@@ -351,7 +351,7 @@ class MatchController extends BaseController
             $this->totals_service->add(array_map(function (array $total) use ($match_id) {
                 return Total::from_total_request_entry($match_id, new TotalRequestEntry($total));
             }, $create_request->totals));
-            $this->tag_map_service->create($match_id, $create_request->tags, TagEntityType::MATCH);
+            $this->tag_map_service->create($match_id, $create_request->tags);
 
             $this->db->commit();
         }

@@ -174,7 +174,7 @@ class SeriesController extends BaseController
             $series = $this->series_service->create($create_request);
             $this->series_teams_map_service->add($series->id, $create_request->teams);
             $this->man_of_the_series_service->add($series->id, $man_of_the_series_to_add);
-            $this->tag_map_service->create($series->id, $create_request->tags, TagEntityType::SERIES);
+            $this->tag_map_service->create($series->id, $create_request->tags);
 
             $this->db->commit();
         }
