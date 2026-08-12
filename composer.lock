@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db438278f148bcdbb766747e77208680",
+    "content-hash": "683f3aba9fdcef3fc0ecd02f899bc2f7",
     "packages": [],
     "packages-dev": [
         {
@@ -237,16 +237,16 @@
         },
         {
             "name": "phalcon/ide-stubs",
-            "version": "v5.18.0",
+            "version": "v5.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phalcon/ide-stubs.git",
-                "reference": "f51f6ceaa5e8b2de61294ef8f4d8be46fa2d6995"
+                "reference": "c06e5e4304d5c38e009dbe2f03a7b70cd44fa804"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phalcon/ide-stubs/zipball/f51f6ceaa5e8b2de61294ef8f4d8be46fa2d6995",
-                "reference": "f51f6ceaa5e8b2de61294ef8f4d8be46fa2d6995",
+                "url": "https://api.github.com/repos/phalcon/ide-stubs/zipball/c06e5e4304d5c38e009dbe2f03a7b70cd44fa804",
+                "reference": "c06e5e4304d5c38e009dbe2f03a7b70cd44fa804",
                 "shasum": ""
             },
             "require": {
@@ -302,7 +302,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2026-07-31T19:24:29+00:00"
+            "time": "2026-08-03T14:12:56+00:00"
         },
         {
             "name": "phalcon/migrations",
