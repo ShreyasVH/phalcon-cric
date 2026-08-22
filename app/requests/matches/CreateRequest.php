@@ -28,6 +28,7 @@ class CreateRequest
     public bool $isOfficial = true;
     public array $totals = [];
     public array $tags = [];
+    public array $partnerships = [];
 
     public function __construct(array $create_request)
     {
@@ -138,6 +139,13 @@ class CreateRequest
         if(array_key_exists('tags', $create_request) && is_array($create_request['tags']))
         {
             $this->tags = $create_request['tags'];
+        }
+
+        if(array_key_exists('partnerships', $create_request) && is_array($create_request['partnerships']))
+        {
+            $this->partnerships = array_map(function($partnership_request) {
+                return new PartnershipRequest($partnership_request);
+            }, $create_request['partnerships']);
         }
     }
 
