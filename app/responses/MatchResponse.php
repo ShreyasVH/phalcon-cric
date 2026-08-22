@@ -31,7 +31,9 @@ class MatchResponse
     public array $wicketKeepers;
     public array $tags;
 
-    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers, array $tags)
+    public array $partnerships;
+
+    public function __construct(Game $match, Series $series, GameType $game_type, TeamResponse $team1, TeamResponse $team2, ResultTypeResponse $result_type, ?WinMarginTypeResponse $win_margin_type_response, StadiumResponse $stadium, $players, array $batting_scores, array $bowling_figures, array $extras, array $man_of_the_match_list, array $captains, array $wicket_keepers, array $tags, array $partnerships)
     {
         $this->id = $match->id;
         $this->series = new SeriesMiniResponse($series, $game_type);
@@ -85,5 +87,6 @@ class MatchResponse
         }, $wicket_keepers);
 
         $this->tags = $tags;
+        $this->partnerships = $partnerships;
     }
 }

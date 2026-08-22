@@ -13,20 +13,15 @@ class PartnershipService
         return Partnership::add($partnership_requests, $player_to_match_player_map);
     }
 
-//    public function get_bowling_stats($player_id)
-//    {
-//        return $this->_bowling_figure_repository->get_bowling_stats($player_id);
-//    }
-//
-//    /**
-//     * @param int[] $match_player_ids
-//     * @return BowlingFigure[]
-//     */
-//    public function get_by_match_player_ids(array $match_player_ids): array
-//    {
-//        return BowlingFigure::get_by_match_player_ids($match_player_ids);
-//    }
-//
+    /**
+     * @param int[] $match_player_ids
+     * @return Partnership[]
+     */
+    public function get_by_match_player_ids(array $match_player_ids): array
+    {
+        return Partnership::get_by_match_player_ids($match_player_ids);
+    }
+
     /**
      * @param array $match_player_ids
      */

@@ -102,6 +102,25 @@ class Partnership extends BaseModel
 
     /**
      * @param int[] $match_player_ids
+     * @return BowlingFigure[]
+     */
+    public static function get_by_match_player_ids(array $match_player_ids): array
+    {
+        $partnerships = [];
+
+        if(!empty($match_player_ids))
+        {
+            $partnerships = self::toList(self::find([
+                'conditions' => '(match_player_id_1 IN ({matchPlayerIds:array}) OR match_player_id_2 IN ({matchPlayerIds:array})) AND primary_entry = 1',
+                'bind' => ['matchPlayerIds' => $match_player_ids]
+            ]));
+        }
+
+        return $partnerships;
+    }
+
+    /**
+     * @param int[] $match_player_ids
      */
     public static function remove(array $match_player_ids)
     {

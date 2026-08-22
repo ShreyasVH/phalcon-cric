@@ -18,6 +18,7 @@ use app\models\Game;
 use app\models\GameType;
 use app\models\ManOfTheMatch;
 use app\models\MatchPlayerMap;
+use app\models\Partnership;
 use app\models\Player;
 use app\models\ResultType;
 use app\models\Series;
@@ -30,6 +31,7 @@ use app\models\WinMarginType;
 use app\models\Total;
 use app\requests\matches\BowlingFigureRequest;
 use app\requests\matches\CreateRequest;
+use app\requests\matches\PartnershipRequest;
 use app\requests\matches\PlayerRequest;
 use app\requests\matches\TotalRequestEntry;
 use app\responses\BattingScoreResponse;
@@ -39,6 +41,7 @@ use app\responses\DismissalModeResponse;
 use app\responses\ExtrasResponse;
 use app\responses\ExtrasTypeResponse;
 use app\responses\MatchResponse;
+use app\responses\PartnershipResponse;
 use app\responses\PlayerMiniResponse;
 use app\responses\ResultTypeResponse;
 use app\responses\StadiumResponse;
@@ -240,6 +243,7 @@ class MatchController extends BaseController
         }, $countries), $countries);
 
         $tags = $this->tags_service->get_by_ids($create_request->tags);
+        $partnerships = [];
 
         try
         {
@@ -355,8 +359,7 @@ class MatchController extends BaseController
                 return Total::from_total_request_entry($match_id, new TotalRequestEntry($total));
             }, $create_request->totals));
             $this->tag_map_service->create($match_id, $create_request->tags);
-            $this->partnership_service->add($create_request->partnerships, $player_to_match_player_map);
-
+            $partnerships = $this->partnership_service->add($create_request->partnerships, $player_to_match_player_map);
             $this->db->commit();
         }
         catch(Exception $ex)
@@ -377,6 +380,23 @@ class MatchController extends BaseController
             $team_player_map[$team_id][] = $player_mini_response;
         }
 
+        $partnership_map = array_combine(array_map(function(Partnership $partnership) {
+            return $partnership->match_player_id_1 . '_' . $partnership->match_player_id_2 . '_' . $partnership->innings . '_' . $partnership->wicket;
+        }, $partnerships), $partnerships);
+        $partnership_responses = array_map(function (PartnershipRequest $partnership_request) use ($player_to_match_player_map, $partnership_map, $player_map, $country_map) {
+            $key = $player_to_match_player_map[$partnership_request->playerId1] . '_' . $player_to_match_player_map[$partnership_request->playerId2] . '_' . $partnership_request->innings . '_' . $partnership_request->wicket;
+            $partnership = $partnership_map[$key];
+
+            $player_1 = $player_map[$partnership->playerId1];
+            $player_2 = $player_map[$partnership->playerId2];
+
+            return new PartnershipResponse(
+                $partnership,
+                PlayerMiniResponse::withPlayerAndCountry($player_1, CountryResponse::from_country($country_map[$player_1->country_id])),
+                PlayerMiniResponse::withPlayerAndCountry($player_2, CountryResponse::from_country($country_map[$player_2->country_id]))
+            );
+
+        }, $create_request->partnerships);
 
         $match_response = new MatchResponse(
             $match,
@@ -394,7 +414,8 @@ class MatchController extends BaseController
             $create_request->manOfTheMatchList,
             $create_request->captains,
             $create_request->wicketKeepers,
-            $tags
+            $tags,
+            $partnership_responses
         );
 
         return $this->created($match_response);
@@ -621,6 +642,13 @@ class MatchController extends BaseController
             return in_array($tag->id, $tag_ids);
         });
 
+        $partnerships = $this->partnership_service->get_by_match_player_ids($match_player_ids);
+        $partnership_responses = array_map(function (Partnership $partnership) use ($player_map, $match_player_to_player_map) {
+            $player1 = $player_map[$match_player_to_player_map[$partnership->match_player_id_1]];
+            $player2 = $player_map[$match_player_to_player_map[$partnership->match_player_id_2]];
+            return new PartnershipResponse($partnership, $player1, $player2);
+        }, $partnerships);
+
         $match_response = new MatchResponse(
             $match,
             $series,
@@ -643,7 +671,8 @@ class MatchController extends BaseController
             array_map(function (WicketKeeper $wicket_keeper) use ($player_map, $match_player_to_player_map) {
                 return $match_player_to_player_map[$wicket_keeper->match_player_id];
             }, $wicket_keepers),
-            $tags
+            $tags,
+            $partnership_responses
         );
 
         return $this->ok($match_response);
