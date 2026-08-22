@@ -387,8 +387,8 @@ class MatchController extends BaseController
             $key = $player_to_match_player_map[$partnership_request->playerId1] . '_' . $player_to_match_player_map[$partnership_request->playerId2] . '_' . $partnership_request->innings . '_' . $partnership_request->wicket;
             $partnership = $partnership_map[$key];
 
-            $player_1 = $player_map[$partnership->playerId1];
-            $player_2 = $player_map[$partnership->playerId2];
+            $player_1 = $player_map[$partnership_request->playerId1];
+            $player_2 = $player_map[$partnership_request->playerId2];
 
             return new PartnershipResponse(
                 $partnership,
