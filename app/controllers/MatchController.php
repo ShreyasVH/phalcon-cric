@@ -57,6 +57,7 @@ use app\services\GameTypeService;
 use app\services\ManOfTheMatchService;
 use app\services\MatchPlayerMapService;
 use app\services\MatchService;
+use app\services\PartnershipService;
 use app\services\PlayerService;
 use app\services\ResultTypeService;
 use app\services\SeriesService;
@@ -97,6 +98,7 @@ class MatchController extends BaseController
     protected TotalsService $totals_service;
     protected TagMapService $tag_map_service;
     protected TagsService $tags_service;
+    protected PartnershipService $partnership_service;
 
     public function onConstruct()
     {
@@ -124,6 +126,7 @@ class MatchController extends BaseController
         $this->totals_service = new TotalsService();
         $this->tag_map_service = new TagMapService();
         $this->tags_service = new TagsService();
+        $this->partnership_service = new PartnershipService();
     }
 
     /**
@@ -352,6 +355,7 @@ class MatchController extends BaseController
                 return Total::from_total_request_entry($match_id, new TotalRequestEntry($total));
             }, $create_request->totals));
             $this->tag_map_service->create($match_id, $create_request->tags);
+            $this->partnership_service->add($create_request->partnerships, $player_to_match_player_map);
 
             $this->db->commit();
         }
