@@ -81,33 +81,33 @@ class Partnership extends BaseModel
         return $partnerships;
     }
 
-//    /**
-//     * @param int[] $match_player_ids
-//     * @return BowlingFigure[]
-//     */
-//    public static function get_by_match_player_ids(array $match_player_ids): array
-//    {
-//        $bowling_figures = [];
-//
-//        if(!empty($match_player_ids))
-//        {
-//            $bowling_figures = self::toList(self::find([
-//                'conditions' => 'match_player_id IN ({matchPlayerIds:array})',
-//                'bind' => ['matchPlayerIds' => $match_player_ids]
-//            ]));
-//        }
-//
-//        return $bowling_figures;
-//    }
-//
-//    /**
-//     * @param int[] $match_player_ids
-//     */
-//    public static function remove(array $match_player_ids)
-//    {
-//        foreach(self::get_by_match_player_ids($match_player_ids) as $bowling_figure)
-//        {
-//            $bowling_figure->delete();
-//        }
-//    }
+    /**
+     * @param int[] $match_player_ids
+     * @return BowlingFigure[]
+     */
+    public static function get_by_match_player_ids_all(array $match_player_ids): array
+    {
+        $partnerships = [];
+
+        if(!empty($match_player_ids))
+        {
+            $partnerships = self::toList(self::find([
+                'conditions' => 'match_player_id_1 IN ({matchPlayerIds:array}) OR match_player_id_2 IN ({matchPlayerIds:array})',
+                'bind' => ['matchPlayerIds' => $match_player_ids]
+            ]));
+        }
+
+        return $partnerships;
+    }
+
+    /**
+     * @param int[] $match_player_ids
+     */
+    public static function remove(array $match_player_ids)
+    {
+        foreach(self::get_by_match_player_ids_all($match_player_ids) as $partnership)
+        {
+            $partnership->delete();
+        }
+    }
 }
