@@ -29,6 +29,7 @@ class CreateRequest
     public array $totals = [];
     public array $tags = [];
     public array $partnerships = [];
+    public array $ballwiseDetails = [];
 
     public function __construct(array $create_request)
     {
@@ -146,6 +147,13 @@ class CreateRequest
             $this->partnerships = array_map(function($partnership_request) {
                 return new PartnershipRequest($partnership_request);
             }, $create_request['partnerships']);
+        }
+
+        if(array_key_exists('ballwiseDetails', $create_request) && is_array($create_request['ballwiseDetails']))
+        {
+            $this->ballwiseDetails = array_map(function($ballwise_detail_request) {
+                return new BallwiseDetailRequest($ballwise_detail_request);
+            }, $create_request['ballwiseDetails']);
         }
     }
 

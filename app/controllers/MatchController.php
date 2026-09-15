@@ -48,6 +48,7 @@ use app\responses\StadiumResponse;
 use app\responses\TeamResponse;
 use app\responses\TeamTypeResponse;
 use app\responses\WinMarginTypeResponse;
+use app\services\BallwiseDetailService;
 use app\services\BattingScoreService;
 use app\services\BowlingFigureService;
 use app\services\CaptainService;
@@ -102,6 +103,7 @@ class MatchController extends BaseController
     protected TagMapService $tag_map_service;
     protected TagsService $tags_service;
     protected PartnershipService $partnership_service;
+    protected BallwiseDetailService $ballwise_detail_service;
 
     public function onConstruct()
     {
@@ -130,6 +132,7 @@ class MatchController extends BaseController
         $this->tag_map_service = new TagMapService();
         $this->tags_service = new TagsService();
         $this->partnership_service = new PartnershipService();
+        $this->ballwise_detail_service = new BallwiseDetailService();
     }
 
     /**
@@ -360,6 +363,7 @@ class MatchController extends BaseController
             }, $create_request->totals));
             $this->tag_map_service->create($match_id, $create_request->tags);
             $partnerships = $this->partnership_service->add($create_request->partnerships, $player_to_match_player_map);
+            $this->ballwise_detail_service->add($create_request->ballwiseDetails, $player_to_match_player_map);
             $this->db->commit();
         }
         catch(Exception $ex)
@@ -710,6 +714,7 @@ class MatchController extends BaseController
             $this->batting_score_service->remove($match_player_ids);
             $this->bowling_figure_service->remove($match_player_ids);
             $this->partnership_service->remove($match_player_ids);
+            $this->ballwise_detail_service->remove($match_player_ids);
             $this->match_player_map_service->remove($id);
             $this->totals_service->remove($id);
             $this->match_service->remove($id);
