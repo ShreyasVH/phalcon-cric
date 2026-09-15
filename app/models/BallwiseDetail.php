@@ -60,24 +60,24 @@ class BallwiseDetail extends BaseModel
         return $ballwise_detail_list;
     }
 
-//    /**
-//     * @param int[] $match_player_ids
-//     * @return BowlingFigure[]
-//     */
-//    public static function get_by_match_player_ids_all(array $match_player_ids): array
-//    {
-//        $partnerships = [];
-//
-//        if(!empty($match_player_ids))
-//        {
-//            $partnerships = self::toList(self::find([
-//                'conditions' => 'match_player_id_1 IN ({matchPlayerIds:array}) OR match_player_id_2 IN ({matchPlayerIds:array})',
-//                'bind' => ['matchPlayerIds' => $match_player_ids]
-//            ]));
-//        }
-//
-//        return $partnerships;
-//    }
+    /**
+     * @param int[] $match_player_ids
+     * @return BallwiseDetail[]
+     */
+    public static function get_by_match_player_ids_all(array $match_player_ids): array
+    {
+        $ballwise_detail_list = [];
+
+        if(!empty($match_player_ids))
+        {
+            $ballwise_detail_list = self::toList(self::find([
+                'conditions' => 'batsman_match_player_id IN ({matchPlayerIds:array}) OR bowler_match_player_id IN ({matchPlayerIds:array})',
+                'bind' => ['matchPlayerIds' => $match_player_ids]
+            ]));
+        }
+
+        return $ballwise_detail_list;
+    }
 //
 //    /**
 //     * @param int[] $match_player_ids
@@ -98,14 +98,14 @@ class BallwiseDetail extends BaseModel
 //        return $partnerships;
 //    }
 //
-//    /**
-//     * @param int[] $match_player_ids
-//     */
-//    public static function remove(array $match_player_ids)
-//    {
-//        foreach(self::get_by_match_player_ids_all($match_player_ids) as $partnership)
-//        {
-//            $partnership->delete();
-//        }
-//    }
+    /**
+     * @param int[] $match_player_ids
+     */
+    public static function remove(array $match_player_ids)
+    {
+        foreach(self::get_by_match_player_ids_all($match_player_ids) as $ballwise_detail)
+        {
+            $ballwise_detail->delete();
+        }
+    }
 }

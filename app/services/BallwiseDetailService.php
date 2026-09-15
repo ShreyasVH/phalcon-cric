@@ -22,11 +22,11 @@ class BallwiseDetailService
 //        return Partnership::get_by_match_player_ids($match_player_ids);
 //    }
 //
-//    /**
-//     * @param array $match_player_ids
-//     */
-//    public function remove(array $match_player_ids)
-//    {
-//        Partnership::remove($match_player_ids);
-//    }
+    /**
+     * @param array $match_player_ids
+     */
+    public function remove(array $match_player_ids)
+    {
+        BallwiseDetail::remove($match_player_ids);
+    }
 }
